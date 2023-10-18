@@ -25,11 +25,11 @@ android {
     namespace "com.rnmaps.maps"
   }
 
-  compileSdkVersion safeExtGet('compileSdkVersion', 31)
+  compileSdkVersion safeExtGet('compileSdkVersion', 33)
 
   defaultConfig {
     minSdkVersion safeExtGet('minSdkVersion', 21)
-    targetSdkVersion safeExtGet('targetSdkVersion', 31)
+    targetSdkVersion safeExtGet('targetSdkVersion', 33)
   }
 }
 
@@ -49,9 +49,7 @@ repositories {
 
 dependencies {
   implementation 'com.facebook.react:react-native:+'
-  implementation "com.google.android.gms:play-services-base:${safeExtGet('playServicesVersion', '18.1.0')}"
-  implementation "com.google.android.gms:play-services-maps:${safeExtGet('playServicesVersion', '18.0.2')}"
-  implementation "com.google.android.gms:play-services-location:21.0.1"
-  implementation 'com.google.maps.android:android-maps-utils:3.4.0'
+  implementation "com.google.android.libraries.navigation:navigation:5.0.0"
+  implementation 'com.google.maps.android:android-maps-utils:3.5.3'
   implementation "androidx.work:work-runtime:2.7.1"
 }
