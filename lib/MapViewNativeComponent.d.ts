@@ -13,6 +13,8 @@ interface NativeCommands {
     fitToCoordinates: (viewRef: NonNullable<React.RefObject<MapViewNativeComponentType>['current']>, coordinates: LatLng[], edgePadding: EdgePadding, animated: boolean) => void;
     setMapBoundaries: (viewRef: NonNullable<React.RefObject<MapViewNativeComponentType>['current']>, northEast: LatLng, southWest: LatLng) => void;
     setIndoorActiveLevelIndex: (viewRef: NonNullable<React.RefObject<MapViewNativeComponentType>['current']>, activeLevelIndex: number) => void;
+    startNavigation: (viewRef: NonNullable<React.RefObject<MapViewNativeComponentType>['current']>, coordinate: LatLng, placeId?: string) => void;
+    recenter: (viewRef: NonNullable<React.RefObject<MapViewNativeComponentType>['current']>) => void;
 }
 export declare const Commands: NativeCommands;
 export {};

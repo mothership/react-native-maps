@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.PermissionChecker;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.MotionEventCompat;
+import androidx.fragment.app.FragmentActivity;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 import android.location.Location;
 
 import com.facebook.react.bridge.LifecycleEventListener;
@@ -62,6 +64,18 @@ import com.google.maps.android.data.kml.KmlLayer;
 import com.google.maps.android.data.kml.KmlPlacemark;
 import com.google.maps.android.data.kml.KmlStyle;
 
+import com.google.android.libraries.navigation.ArrivalEvent;
+import com.google.android.libraries.navigation.DisplayOptions;
+import com.google.android.libraries.navigation.ForceNightMode;
+import com.google.android.libraries.navigation.ListenableResultFuture;
+import com.google.android.libraries.navigation.NavigationApi;
+import com.google.android.libraries.navigation.Navigator;
+import com.google.android.libraries.navigation.RoutingOptions;
+import com.google.android.libraries.navigation.SpeedAlertOptions;
+import com.google.android.libraries.navigation.SpeedAlertSeverity;
+import com.google.android.libraries.navigation.StylingOptions;
+import com.google.android.libraries.navigation.Waypoint;
+
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
@@ -75,9 +89,9 @@ import java.util.concurrent.ExecutionException;
 
 import static androidx.core.content.PermissionChecker.checkSelfPermission;
 
-public class MapView extends com.google.android.gms.maps.MapView implements GoogleMap.InfoWindowAdapter,
+public class NavigationView extends com.google.android.libraries.navigation.NavigationView implements GoogleMap.InfoWindowAdapter,
         GoogleMap.OnMarkerDragListener, OnMapReadyCallback, GoogleMap.OnPoiClickListener, GoogleMap.OnIndoorStateChangeListener {
-  public GoogleMap map;
+  public GoogleMap map = null;
   private MarkerManager markerManager;
   private MarkerManager.Collection markerCollection;
   private PolylineManager polylineManager;
@@ -122,7 +136,7 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
   private final Map<TileOverlay, MapHeatmap> heatmapMap = new HashMap<>();
   private final Map<TileOverlay, MapGradientPolyline> gradientPolylineMap = new HashMap<>();
   private final GestureDetectorCompat gestureDetector;
-  private final MapManager manager;
+  private final NavigationManager manager;
   private LifecycleEventListener lifecycleListener;
   private boolean paused = false;
   private boolean destroyed = false;
@@ -132,6 +146,15 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
 
   private final ViewAttacherGroup attacherGroup;
   private LatLng tapLocation;
+
+  private RoutingOptions mRoutingOptions = null;
+  private DisplayOptions mDisplayOptions = null;
+  private Navigator.RemainingTimeOrDistanceChangedListener remainingTimeOrDistanceChangedListener = null;
+  private Navigator.ArrivalListener arrivalListener = null;
+  private Navigator mNavigator = null;
+  private boolean showTrafficLights = false;
+  private boolean showStopSigns = false;
+  private int audioGuidance = Navigator.AudioGuidance.VOICE_ALERTS_AND_GUIDANCE;
 
   private static boolean contextHasBug(Context context) {
     return context == null ||
@@ -163,20 +186,19 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
     return superContext;
   }
 
-  public MapView(ThemedReactContext reactContext, ReactApplicationContext appContext,
-                 MapManager manager,
+  public NavigationView(ThemedReactContext reactContext, ReactApplicationContext appContext,
+                 NavigationManager manager,
                  GoogleMapOptions googleMapOptions) {
-    super(getNonBuggyContext(reactContext, appContext), googleMapOptions);
+    super(getNonBuggyContext(reactContext, appContext));
 
     this.manager = manager;
     this.context = reactContext;
 
-    super.onCreate(null);
-    // TODO(lmr): what about onStart????
-    super.onResume();
-    super.getMapAsync(this);
+    final NavigationView view = this;
 
-    final MapView view = this;
+    onCreate(null);
+    onStart();
+    getMapAsync(this);
 
     fusedLocationSource = new FusedLocationSource(context);
 
@@ -203,7 +225,7 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
       @Override public void onLayoutChange(View v, int left, int top, int right, int bottom,
                                            int oldLeft, int oldTop, int oldRight, int oldBottom) {
         if (!paused) {
-          MapView.this.cacheView();
+          NavigationView.this.cacheView();
         }
       }
     });
@@ -219,7 +241,10 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
     attacherLayoutParams.leftMargin = 99999999;
     attacherLayoutParams.topMargin = 99999999;
     attacherGroup.setLayoutParams(attacherLayoutParams);
+
     addView(attacherGroup);
+
+    setNavigationUiEnabled(true);
   }
 
   @Override
@@ -249,7 +274,7 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
 
     manager.pushEvent(context, this, "onMapReady", new WritableNativeMap());
 
-    final MapView view = this;
+    final NavigationView view = this;
 
     map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
       @Override
@@ -367,6 +392,11 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
       @Override
       public void onCameraMoveStarted(int reason) {
         cameraMoveReason = reason;
+
+        // For navigation
+        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE && isNavigationUiEnabled()) {
+          NavigationView.this.sendShowRecenterButton(true);
+        }
       }
     });
 
@@ -404,7 +434,7 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
       @Override public void onMapLoaded() {
         isMapLoaded = true;
         manager.pushEvent(context, view, "onMapLoaded", new WritableNativeMap());
-        MapView.this.cacheView();
+        NavigationView.this.cacheView();
       }
     });
 
@@ -423,9 +453,11 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
           map.setMyLocationEnabled(showUserLocation);
           map.setLocationSource(fusedLocationSource);
         }
-        synchronized (MapView.this) {
+        synchronized (NavigationView.this) {
           if (!destroyed) {
-            MapView.this.onResume();
+            try {
+              onResume();
+            } catch (Exception e) {}
           }
           paused = false;
         }
@@ -437,9 +469,11 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
           //noinspection MissingPermission
           map.setMyLocationEnabled(false);
         }
-        synchronized (MapView.this) {
+        synchronized (NavigationView.this) {
           if (!destroyed) {
-            MapView.this.onPause();
+            try {
+              onPause();
+            } catch (Exception e) {}
           }
           paused = true;
         }
@@ -447,11 +481,16 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
 
       @Override
       public void onHostDestroy() {
-        MapView.this.doDestroy();
+        NavigationView.this.doDestroy();
       }
     };
 
     context.addLifecycleEventListener(lifecycleListener);
+
+    //Re-add features if they were already added
+    for (MapFeature feature : features) {
+      feature.addToMap(map);
+    }
   }
 
   private boolean hasPermissions() {
@@ -464,6 +503,12 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
   onDestroy is final method so I can't override it.
    */
   public synchronized void doDestroy() {
+    if (mNavigator != null) {
+      mNavigator.stopGuidance();
+      mNavigator.cleanup();
+    }
+    setNavigationUiEnabled(false);
+
     if (destroyed) {
       return;
     }
@@ -474,10 +519,14 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
       lifecycleListener = null;
     }
     if (!paused) {
-      onPause();
+      try {
+        onPause();
+      } catch (Exception e) {}
       paused = true;
     }
-    onDestroy();
+    try {
+      onDestroy();
+    } catch (Exception e) {}
   }
 
   public void setInitialRegion(ReadableMap initialRegion) {
@@ -591,9 +640,36 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
     }
   }
 
+  public void setShowsNavigationTripProgressBar(boolean showsNavigationTripProgressBar) {
+    setTripProgressBarEnabled(showsNavigationTripProgressBar);
+  }
+
+  public void setShowsTrafficLights(boolean showsTrafficLights) {
+    showTrafficLights = showsTrafficLights;
+  }
+
+  public void setShowsStopSigns(boolean showsStopSigns) {
+    showStopSigns = showsStopSigns;
+  }
+
+  public void setShowsSpeedometer(boolean showsSpeedometer) {
+    setSpeedometerEnabled(showsSpeedometer);
+  }
+
+  public void setShowsSpeedLimit(boolean showsSpeedLimit) {
+    setSpeedLimitIconEnabled(showsSpeedLimit);
+  }
+
+  public void setNavigationVoiceMuted(boolean navigationVoiceMuted) {
+    audioGuidance = navigationVoiceMuted ? Navigator.AudioGuidance.SILENT : Navigator.AudioGuidance.VOICE_ALERTS_AND_GUIDANCE;
+    if (mNavigator != null &&  mNavigator.isGuidanceRunning()) {
+      mNavigator.setAudioGuidance(audioGuidance);
+    }
+  }
+
   public void setShowsUserLocation(boolean showUserLocation) {
     this.showUserLocation = showUserLocation; // hold onto this for lifecycle handling
-    if (hasPermissions()) {
+    if (hasPermissions() && map != null) {
       map.setLocationSource(fusedLocationSource);
       //noinspection MissingPermission
       map.setMyLocationEnabled(showUserLocation);
@@ -983,6 +1059,171 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
     map.setPadding(baseLeftMapPadding, baseTopMapPadding, baseRightMapPadding, baseBottomMapPadding);
   }
 
+  public void recenter() {
+    if (map != null) {
+      map.followMyLocation(GoogleMap.CameraPerspective.TILTED);
+      sendShowRecenterButton(false);
+    }
+  }
+
+  private static final int BLACK_COLOR = 0xFF000000;
+
+  public void startNavigation(ReadableMap coord, String toPlaceId) {
+    FragmentActivity activity = (FragmentActivity) context.getCurrentActivity();
+    if (activity == null) {
+      return;
+    }
+
+    double toLatitude = coord.getDouble("latitude");
+    double toLongitude = coord.getDouble("longitude");
+
+    NavigationApi.getNavigator(activity, new NavigationApi.NavigatorListener() {
+      /**
+       * Sets up the navigation UI when the navigator is ready for use.
+       */
+      @Override
+      public void onNavigatorReady(Navigator navigator) {
+        mNavigator = navigator;
+
+        // Create the waypoint and if it fails, return early
+        Waypoint waypoint = null;
+        boolean waypointCreated = false;
+        if (toPlaceId != null) {
+          try {
+            waypoint = Waypoint.builder().setPlaceIdString(
+                    toPlaceId
+            ).build();
+            waypointCreated = true;
+          } catch(Exception e) {}
+        }
+        if (!waypointCreated && toLatitude != 0 && toLongitude != 0) {
+          waypoint = Waypoint.builder().setLatLng(
+                  toLatitude, toLongitude
+          ).build();
+        }
+
+        if (waypoint == null) {
+          return;
+        }
+
+        // Follow user
+        if (map != null) {
+          map.followMyLocation(GoogleMap.CameraPerspective.TILTED);
+        }
+
+        // UI settings
+        setNavigationUiEnabled(true);
+        setHeaderEnabled(true);
+        setEtaCardEnabled(false);
+        setRecenterButtonEnabled(false);
+//        setTrafficIncidentCardsEnabled(true);
+//        setTrafficPromptsEnabled(true);
+        setForceNightMode(ForceNightMode.FORCE_DAY);
+        setStylingOptions(new StylingOptions()
+                .primaryDayModeThemeColor(BLACK_COLOR)
+                .primaryNightModeThemeColor(BLACK_COLOR)
+                .secondaryDayModeThemeColor(BLACK_COLOR)
+                .secondaryNightModeThemeColor(BLACK_COLOR));
+
+        // Setup SpeedAlertOptions
+        mNavigator.setSpeedAlertOptions(new SpeedAlertOptions.Builder()
+                .setSpeedAlertThresholdPercentage(SpeedAlertSeverity.MINOR, 5.0f)
+                .setSpeedAlertThresholdPercentage(SpeedAlertSeverity.MAJOR, 10.0f)
+                .setSeverityUpgradeDurationSeconds(5)
+                .build());
+
+        // Add listeners
+        remainingTimeOrDistanceChangedListener = new Navigator.RemainingTimeOrDistanceChangedListener() {
+          @Override
+          public void onRemainingTimeOrDistanceChanged() {
+            // send event
+            sendCurrentNavigationInfo();
+          }
+        };
+        arrivalListener = new Navigator.ArrivalListener() {
+          @Override
+          public void onArrival(ArrivalEvent arrivalEvent) {
+            if (arrivalEvent.isFinalDestination()) {
+              mNavigator.stopGuidance();
+
+              // Stop simulating vehicle movement.
+              //mNavigator.getSimulator().unsetUserLocation();
+
+              // send event
+              sendArrivalEvent();
+            }
+          }
+        };
+        mNavigator.addArrivalListener(arrivalListener);
+        mNavigator.addRemainingTimeOrDistanceChangedListener(10, 100, remainingTimeOrDistanceChangedListener);
+
+        // Set the last digit of the car's license plate to get route restrictions
+        // in supported countries. (optional)
+        // mNavigator.setLicensePlateRestrictionInfo(12, "US");
+
+        // Set the travel mode (DRIVING, WALKING, CYCLING, TWO_WHEELER, or TAXI).
+        mRoutingOptions =  new RoutingOptions();
+        mRoutingOptions = mRoutingOptions.travelMode(RoutingOptions.TravelMode.DRIVING);
+
+        mDisplayOptions =
+                new DisplayOptions().showTrafficLights(showTrafficLights).showStopSigns(showStopSigns);
+
+        // Navigate to the waypoint
+        ListenableResultFuture<Navigator.RouteStatus> result = mNavigator.setDestination(waypoint, mRoutingOptions, mDisplayOptions);
+        result.setOnResultListener(new ListenableResultFuture.OnResultListener<Navigator.RouteStatus>() {
+          @Override
+          public void onResult(Navigator.RouteStatus routeStatus) {
+            if (routeStatus == Navigator.RouteStatus.OK) {
+              // send event
+              sendLoadRouteEvent();
+
+              // Audio guidance
+              mNavigator.setAudioGuidance(Navigator.AudioGuidance.VOICE_ALERTS_AND_GUIDANCE);
+
+              //mNavigator.getSimulator().simulateLocationsAlongExistingRoute();
+
+              mNavigator.startGuidance();
+            }
+          }
+        });
+      }
+
+      /**
+       * Handles errors from the Navigation SDK.
+       * @param errorCode The error code returned by the navigator.
+       */
+      @Override
+      public void onError(@NavigationApi.ErrorCode int errorCode) {
+      }
+    });
+  }
+
+  private void sendShowRecenterButton(boolean showResumeButton) {
+    WritableMap event = new WritableNativeMap();
+    event.putBoolean("showRecenterButton", showResumeButton);
+    manager.pushEvent(context, this, "onShowRecenterButton", event);
+  }
+
+  private void sendArrivalEvent() {
+    WritableMap event = new WritableNativeMap();
+    manager.pushEvent(context, this, "onArrivedToDestination", event);
+  }
+
+  private void sendLoadRouteEvent() {
+    WritableMap event = new WritableNativeMap();
+    manager.pushEvent(context, this, "onNavigationRouteLoaded", event);
+  }
+
+  private void sendCurrentNavigationInfo() {
+    if (mNavigator == null) {
+      return;
+    }
+    WritableMap event = new WritableNativeMap();
+    event.putInt("distanceRemaining", mNavigator.getCurrentTimeAndDistance().getMeters());
+    event.putInt("durationRemaining", mNavigator.getCurrentTimeAndDistance().getSeconds());
+    manager.pushEvent(context, this, "onNavigationInfoUpdated", event);
+  }
+
   private void appendMapPadding(int iLeft,int iTop, int iRight, int iBottom) {
     int left;
     int top;
@@ -1125,7 +1366,7 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
     if (this.mapLoadingLayout == null) {
       this.mapLoadingLayout = new RelativeLayout(getContext());
       this.mapLoadingLayout.setBackgroundColor(Color.LTGRAY);
-      this.addView(this.mapLoadingLayout,
+      addView(this.mapLoadingLayout,
               new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                       ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -1143,7 +1384,7 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
   private ImageView getCacheImageView() {
     if (this.cacheImageView == null) {
       this.cacheImageView = new ImageView(getContext());
-      this.addView(this.cacheImageView,
+      addView(this.cacheImageView,
               new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                       ViewGroup.LayoutParams.MATCH_PARENT));
       this.cacheImageView.setVisibility(View.INVISIBLE);

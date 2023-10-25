@@ -79,3 +79,10 @@ export type MarkerPressEvent = NativeSyntheticEvent<{
      */
     position?: Point;
 }>;
+export type ShowRecenterButtonEvent = NativeSyntheticEvent<{
+    showRecenterButton: boolean;
+}>;
+export type NavigationInfoUpdatedEvent = NativeSyntheticEvent<{
+    distanceRemaining: number;
+    durationRemaining: number;
+}>;

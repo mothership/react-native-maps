@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Animated as RNAnimated, Animated, NativeSyntheticEvent, ViewProps } from 'react-native';
-import { CalloutPressEvent, ClickEvent, Frame, LatLng, MarkerDeselectEvent, MarkerDragEvent, MarkerDragStartEndEvent, MarkerPressEvent, MarkerSelectEvent, Point, Provider, Region } from './sharedTypes';
+import { CalloutPressEvent, ClickEvent, Frame, LatLng, MarkerDeselectEvent, MarkerDragEvent, MarkerDragStartEndEvent, MarkerPressEvent, MarkerSelectEvent, Point, Region, ShowRecenterButtonEvent, NavigationInfoUpdatedEvent } from './sharedTypes';
 import { Address, BoundingBox, Camera, ChangeEvent, Details, EdgePadding, FitToOptions, IndoorBuildingEvent, IndoorLevelActivatedEvent, KmlMapEvent, LongPressEvent, MapPressEvent, MapStyleElement, MapType, MapTypes, PanDragEvent, PoiClickEvent, SnapshotOptions, UserLocationChangeEvent } from './MapView.types';
 import { Modify } from './sharedTypesInternal';
 import { MapViewNativeComponentType } from './MapViewNativeComponent';
@@ -334,14 +334,6 @@ export type MapViewProps = ViewProps & {
      */
     pitchEnabled?: boolean;
     /**
-     * The map framework to use.
-     * Either `"google"` for GoogleMaps, otherwise `undefined` to use the native map framework (`MapKit` in iOS and `GoogleMaps` in android).
-     *
-     * @platform iOS: Supported
-     * @platform Android: Supported
-     */
-    provider?: Provider;
-    /**
      * The region to be displayed by the map.
      * The region is defined by the center coordinates and the span of coordinates to display.
      *
@@ -548,12 +540,96 @@ export type MapViewProps = ViewProps & {
      * @platform Android: Not supported
      */
     zoomTapEnabled?: boolean;
+    /**
+     * If `true`, the map will be displayed in Navigation mode (in case Terms and conditions have been accepted).
+     *
+     * @default false
+     * @platform iOS: Google Maps only
+     * @platform Android: Supported
+     */
+    navigationModeEnabled?: boolean;
+    /**
+     * If `true`, while navigating, the map will show a progress bar representing the trip distance and traffic along the route.
+     *
+     * @default false
+     * @platform iOS: Google Maps only
+     * @platform Android: Supported
+     */
+    showsNavigationTripProgressBar?: boolean;
+    /**
+     * If `true`, traffic lights will be displayed on the map.
+     *
+     * @default false
+     * @platform iOS: Google Maps only
+     * @platform Android: Supported
+     */
+    showsTrafficLights?: boolean;
+    /**
+     * If `true`, stop signs will be displayed on the map.
+     *
+     * @default false
+     * @platform iOS: Google Maps only
+     * @platform Android: Supported
+     */
+    showsStopSigns?: boolean;
+    /**
+     * If `true`, speedometer will be displayed on the map (only while the Recenter button is not shown).
+     *
+     * @default false
+     * @platform iOS: Google Maps only
+     * @platform Android: Supported
+     */
+    showsSpeedometer?: boolean;
+    /**
+     * If `true`, speed limit will be displayed on the map (only while the Recenter button is not shown).
+     *
+     * @default false
+     * @platform iOS: Google Maps only
+     * @platform Android: Supported
+     */
+    showsSpeedLimit?: boolean;
+    /**
+     * If `true`, while map is in navigation mode, you will hear NO voice guidande.
+     *
+     * @default false
+     * @platform iOS: Google Maps only
+     * @platform Android: Supported
+     */
+    navigationVoiceMuted?: boolean;
+    /**
+     * Callback that is called when the Recenter button changes its visibility.
+     *
+     * @platform iOS: Google Maps only
+     * @platform Android: Supported
+     */
+    onShowRecenterButton?: (event: ShowRecenterButtonEvent) => void;
+    /**
+     * Callback that is called when the navigation route to the destination has been loaded.
+     *
+     * @platform iOS: Google Maps only
+     * @platform Android: Supported
+     */
+    onNavigationRouteLoaded?: (event: NativeSyntheticEvent<{}>) => void;
+    /**
+     * Callback that is called when the navigation ETA changes.
+     *
+     * @platform iOS: Google Maps only
+     * @platform Android: Supported
+     */
+    onNavigationInfoUpdated?: (event: NavigationInfoUpdatedEvent) => void;
+    /**
+     * Callback that is called when the user arrives to their destination using navigation.
+     *
+     * @platform iOS: Google Maps only
+     * @platform Android: Supported
+     */
+    onArrivedToDestination?: (event: NativeSyntheticEvent<{}>) => void;
 };
 type ModifiedProps = Modify<MapViewProps, {
     region?: MapViewProps['region'] | null;
     initialRegion?: MapViewProps['initialRegion'] | null;
 }>;
-export type NativeProps = Omit<ModifiedProps, 'customMapStyle' | 'onRegionChange' | 'onRegionChangeComplete'> & {
+export type NativeProps = Omit<ModifiedProps, 'customMapStyle' | 'onRegionChange' | 'onRegionChangeComplete' | 'navigationModeEnabled'> & {
     ref: React.RefObject<MapViewNativeComponentType>;
     customMapStyleString?: string;
     handlePanDrag?: boolean;
@@ -656,6 +732,8 @@ declare class MapView extends React.Component<MapViewProps, State> {
      * @return Object Object bounding box ({ northEast: <LatLng>, southWest: <LatLng> })
      */
     boundingBoxForRegion(region: Region): BoundingBox;
+    startNavigation(coordinate: LatLng, placeId?: string): void;
+    recenter(): void;
     private _mapManagerCommand;
     private _getHandle;
     private _runCommand;

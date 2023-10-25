@@ -16,7 +16,7 @@ export declare const SUPPORTED: ImplementationStatus;
 export declare const USES_DEFAULT_IMPLEMENTATION: ImplementationStatus;
 export declare const NOT_SUPPORTED: ImplementationStatus;
 export declare const ProviderContext: import("react").Context<Provider>;
-export declare function getNativeMapName(provider: Provider): "AIRMap" | "AIRGoogleMap";
+export declare function getNativeMapName(navigationMode: boolean): "AIRNavigationMap" | "AIRMap" | "AIRGoogleMap";
 export declare const createNotSupportedComponent: (message: string) => () => null;
 export declare const googleMapIsInstalled = true;
 export default function decorateMapComponent<Type extends Component>(Component: Type, componentName: ComponentName, providers: Providers): Type;

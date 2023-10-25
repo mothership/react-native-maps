@@ -18,6 +18,7 @@
 #import "AIRGoogleMapWMSTile.h"
 #import "AIRGoogleMapOverlay.h"
 #import <GoogleMaps/GoogleMaps.h>
+#import <GoogleNavigation/GoogleNavigation.h>
 #import <MapKit/MapKit.h>
 #import <React/UIView+React.h>
 #import <React/RCTBridge.h>
@@ -49,11 +50,14 @@ id regionAsJSON(MKCoordinateRegion region) {
            };
 }
 
-@interface AIRGoogleMap () <GMSIndoorDisplayDelegate>
+@interface AIRGoogleMap () <GMSIndoorDisplayDelegate, GMSNavigatorListener>
 
 - (id)eventFromCoordinate:(CLLocationCoordinate2D)coordinate;
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSDictionary*> *origGestureRecognizersMeta;
+
+// Navigation tmp properties
+@property (nonatomic, assign) BOOL isNavigationVoiceMuted;
 
 @end
 
@@ -83,6 +87,7 @@ id regionAsJSON(MKCoordinateRegion region) {
     _overlays = [NSMutableArray array];
     _initialCamera = nil;
     _cameraProp = nil;
+    _isNavigationVoiceMuted = false;
     _initialRegion = MKCoordinateRegionMake(CLLocationCoordinate2DMake(0.0, 0.0), MKCoordinateSpanMake(0.0, 0.0));
     _region = MKCoordinateRegionMake(CLLocationCoordinate2DMake(0.0, 0.0), MKCoordinateSpanMake(0.0, 0.0));
     _initialRegionSet = false;
@@ -564,6 +569,54 @@ id regionAsJSON(MKCoordinateRegion region) {
   return self.settings.indoorPicker;
 }
 
+// Navigation properties
+
+- (BOOL)navigationModeEnabled {
+  return self.navigationEnabled;
+}
+- (void)setNavigationModeEnabled:(BOOL)navigationModeEnabled {
+    if ([GMSNavigationServices areTermsAndConditionsAccepted]) {
+        [self setNavigationEnabled:navigationModeEnabled];
+    }
+}
+- (BOOL)showsNavigationTripProgressBar {
+  return self.settings.isNavigationTripProgressBarEnabled;
+}
+- (void)setShowsNavigationTripProgressBar:(BOOL)showsNavigationTripProgressBar {
+    [self.settings setNavigationTripProgressBarEnabled:showsNavigationTripProgressBar];
+}
+- (BOOL)showsTrafficLights {
+  return self.settings.showsTrafficLights;
+}
+- (void)setShowsTrafficLights:(BOOL)showsTrafficLights {
+    [self.settings setShowsTrafficLights:showsTrafficLights];
+}
+- (BOOL)showsStopSigns {
+  return self.settings.showsStopSigns;
+}
+- (void)setShowsStopSigns:(BOOL)showsStopSigns {
+    [self.settings setShowsStopSigns:showsStopSigns];
+}
+- (BOOL)showsSpeedometer {
+  return self.shouldDisplaySpeedometer;
+}
+- (void)setShowsSpeedometer:(BOOL)showsSpeedometer {
+    [self setShouldDisplaySpeedometer:showsSpeedometer];
+}
+- (BOOL)showsSpeedLimit {
+  return self.shouldDisplaySpeedometer;
+}
+- (void)setShowsSpeedLimit:(BOOL)showsSpeedLimit {
+    [self setShouldDisplaySpeedLimit:showsSpeedLimit];
+}
+- (BOOL)navigationVoiceMuted {
+  return self.isNavigationVoiceMuted;
+}
+- (void)setNavigationVoiceMuted:(BOOL)navigationVoiceMuted {
+    self.isNavigationVoiceMuted = navigationVoiceMuted;
+    [self.navigator setVoiceGuidance:navigationVoiceMuted ? GMSNavigationVoiceGuidanceSilent : GMSNavigationVoiceGuidanceAlertsAndGuidance ];
+}
+
 + (MKCoordinateRegion) makeGMSCameraPositionFromMap:(GMSMapView *)map andGMSCameraPosition:(GMSCameraPosition *)position {
   // solution from here: http://stackoverflow.com/a/16587735/1102215
   GMSVisibleRegion visibleRegion = map.projection.visibleRegion;
@@ -962,6 +1015,97 @@ id regionAsJSON(MKCoordinateRegion region) {
                 @"shortName": level.shortName
         }
     });
+}
+
+#pragma mark - Navigation
+
+- (void) startNavigationWithCoordinate:(CLLocationCoordinate2D)coordinate andPlaceId:(NSString *)placeId {
+    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:self.initialRegion.center.latitude longitude:self.initialRegion.center.longitude zoom:14];
+    self.camera = camera;
+    [GMSNavigationServices showTermsAndConditionsDialogIfNeededWithCompanyName:@"Mothership" callback:^(BOOL termsAccepted) {
+        if (!termsAccepted) {
+            return;
+        }
+        
+        // Setup destination
+        NSMutableArray<GMSNavigationWaypoint *>* destinations = [NSMutableArray array];
+        if (placeId != nil) {
+            [destinations addObject:[[GMSNavigationWaypoint alloc] initWithPlaceID:placeId title:@""]];
+        } else if (coordinate.latitude != 0 && coordinate.longitude != 0) {
+            [destinations addObject:[[GMSNavigationWaypoint alloc] initWithLocation:coordinate title:@""]];
+        }
+        if (destinations.count == 0) {
+            return;
+        }
+        
+        // Enable navigation if the user accepts the terms
+        [self setNavigationEnabled:true]; //Hardcode to true as we are calling startNavigation method
+        [self setTravelMode:GMSNavigationTravelModeDriving];
+        
+        // UI Settings
+        [self.settings setRecenterButtonEnabled:false];
+        [self.settings setNavigationHeaderPrimaryBackgroundColor:[UIColor blackColor]];
+        [self.settings setNavigationHeaderSecondaryBackgroundColor:[UIColor blackColor]];
+        [self.settings setNavigationFooterEnabled:false];
+        [self.settings setRecenterButtonEnabled:false];
+        
+        // Configure SpeedAlertOptions
+        CGFloat minorSpeedAlertThresholdPercentage = 0.05f;
+        CGFloat majorSpeedAlertThresholdPercentage = 0.1f;
+        NSTimeInterval severityUpgradeDurationSeconds = 5;
+        GMSNavigationMutableSpeedAlertOptions *mutableSpeedAlertOptions = [[GMSNavigationMutableSpeedAlertOptions alloc] init];
+        [mutableSpeedAlertOptions setSeverityUpgradeDurationSeconds:severityUpgradeDurationSeconds];
+        [mutableSpeedAlertOptions setSpeedAlertThresholdPercentage:minorSpeedAlertThresholdPercentage forSpeedAlertSeverity:GMSNavigationSpeedAlertSeverityMinor];
+        [mutableSpeedAlertOptions setSpeedAlertThresholdPercentage:majorSpeedAlertThresholdPercentage forSpeedAlertSeverity:GMSNavigationSpeedAlertSeverityMajor];
+        // Set SpeedAlertOptions to Navigator
+        [self.navigator setSpeedAlertOptions:mutableSpeedAlertOptions];
+        
+        // Navigator listener
+        [self.navigator setTimeUpdateThreshold:10];
+        [self.navigator setDistanceUpdateThreshold:100];
+        [self.navigator addListener:self];
+        
+        // Start navigation
+        [self.navigator setDestinations:destinations callback:^(GMSRouteStatus routeStatus) {
+            if (routeStatus != GMSRouteStatusOK) {
+                return;
+            }
+            
+            if (self.onNavigationRouteLoaded) {
+                self.onNavigationRouteLoaded(@{});
+            }
+            
+            [self.navigator setGuidanceActive:true];
+            [self setCameraMode:GMSNavigationCameraModeFollowing];
+        }];
+    }];
+    
+}
+
+- (void)recenter {
+    if ([self.navigator isGuidanceActive]) {
+        self.cameraMode = GMSNavigationCameraModeFollowing;
+    }
+    
+    if (self.onShowRecenterButton) self.onShowRecenterButton(@{@"showRecenterButton": @NO});
+}
+
+- (void)navigator:(GMSNavigator *)navigator didArriveAtWaypoint:(GMSNavigationWaypoint *)waypoint {
+    if (self.onArrivedToDestination) self.onArrivedToDestination(@{});
+}
+
+- (void)navigator:(GMSNavigator *)navigator didUpdateNavInfo:(GMSNavigationNavInfo *)navInfo {
+    if (self.onNavigationInfoUpdated) self.onNavigationInfoUpdated(@{@"distanceRemaining": @(navInfo.distanceToFinalDestinationMeters), @"durationRemaining": @(navInfo.timeToFinalDestinationSeconds)});
+}
+
+- (void)mapView:(GMSMapView *)mapView willMove:(BOOL)gesture {
+    if (![mapView.navigator isGuidanceActive]) {
+        return;
+    }
+    if (!gesture) {
+        return;
+    }
+    if (self.onShowRecenterButton) self.onShowRecenterButton(@{@"showRecenterButton": @YES});
 }
 
 

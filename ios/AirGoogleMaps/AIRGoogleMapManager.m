@@ -28,6 +28,7 @@
 #import "RCTConvert+AirMap.h"
 
 #import <MapKit/MapKit.h>
+#import <CoreLocation/CoreLocation.h>
 #import <QuartzCore/QuartzCore.h>
 
 static NSString *const RCTMapViewKey = @"MapView";
@@ -106,6 +107,19 @@ RCT_EXPORT_VIEW_PROPERTY(mapType, GMSMapViewType)
 RCT_EXPORT_VIEW_PROPERTY(minZoomLevel, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(maxZoomLevel, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(kmlSrc, NSString)
+//Navigation properties
+RCT_EXPORT_VIEW_PROPERTY(navigationModeEnabled, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showsNavigationTripProgressBar, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showsTrafficLights, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showsStopSigns, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showsSpeedometer, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showsSpeedLimit, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(navigationVoiceMuted, BOOL)
+//Navigation events
+RCT_EXPORT_VIEW_PROPERTY(onShowRecenterButton, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onNavigationRouteLoaded, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onNavigationInfoUpdated, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onArrivedToDestination, RCTDirectEventBlock)
 
 RCT_EXPORT_METHOD(getCamera:(nonnull NSNumber *)reactTag
                   resolver: (RCTPromiseResolveBlock)resolve
@@ -482,6 +496,41 @@ RCT_EXPORT_METHOD(setIndoorActiveLevelIndex:(nonnull NSNumber *)reactTag
   }];
  }
 
+// Navigation exported methods
+
+RCT_EXPORT_METHOD(startNavigation:(nonnull NSNumber *)reactTag
+                  coordinate:(NSDictionary *)coordinate
+                  placeId:(NSString *)placeId)
+{
+    CLLocationCoordinate2D coord =
+    CLLocationCoordinate2DMake(
+                               [coordinate[@"latitude"] doubleValue],
+                               [coordinate[@"longitude"] doubleValue]
+                               );
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        id view = viewRegistry[reactTag];
+        if (![view isKindOfClass:[AIRGoogleMap class]]) {
+            RCTLogError(@"Invalid view returned from registry, expecting AIRGoogleMap, got: %@", view);
+        } else {
+            AIRGoogleMap *mapView = (AIRGoogleMap *)view;
+            [mapView startNavigationWithCoordinate:coord andPlaceId:placeId];
+        }
+    }];
+}
+
+RCT_EXPORT_METHOD(recenter:(nonnull NSNumber *)reactTag)
+{
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        id view = viewRegistry[reactTag];
+        if (![view isKindOfClass:[AIRGoogleMap class]]) {
+            RCTLogError(@"Invalid view returned from registry, expecting AIRGoogleMap, got: %@", view);
+        } else {
+            AIRGoogleMap *mapView = (AIRGoogleMap *)view;
+            [mapView recenter];
+        }
+    }];
+}
+
 + (BOOL)requiresMainQueueSetup {
   return YES;
 }
@@ -492,6 +541,9 @@ RCT_EXPORT_METHOD(setIndoorActiveLevelIndex:(nonnull NSNumber *)reactTag
 
 - (void)mapView:(GMSMapView *)mapView willMove:(BOOL)gesture{
     self.isGesture = gesture;
+    //forward event
+    AIRGoogleMap *googleMapView = (AIRGoogleMap *)mapView;
+    [googleMapView mapView:mapView willMove:gesture];
 }
 
 - (void)mapViewDidStartTileRendering:(GMSMapView *)mapView {
