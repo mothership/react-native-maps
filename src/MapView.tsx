@@ -162,14 +162,6 @@ export type MapViewProps = ViewProps & {
   legalLabelInsets?: EdgePadding;
 
   /**
-   * Enables lite mode on Android
-   *
-   * @platform iOS: Not supported
-   * @platform Android: Supported
-   */
-  liteMode?: boolean;
-
-  /**
    * Sets loading background color.
    *
    * @default `#FFFFFF`
@@ -1077,14 +1069,6 @@ class MapView extends React.Component<MapViewProps, State> {
       };
     }
 
-    if (Platform.OS === 'android' && this.props.liteMode) {
-      return (
-        <ProviderContext.Provider value={this.props.provider}>
-          <AIRMapLite {...props} />
-        </ProviderContext.Provider>
-      );
-    }
-
     const AIRMap = getNativeMapComponent(this.props.provider);
 
     return (
@@ -1113,10 +1097,6 @@ if (Platform.OS === 'android') {
 }
 const getNativeMapComponent = (provider: Provider) =>
   airMaps[provider || 'default'];
-
-const AIRMapLite = UIManager.getViewManagerConfig('AIRMapLite')
-  ? requireNativeComponent<NativeProps>('AIRMapLite')
-  : () => null;
 
 export const AnimatedMapView = RNAnimated.createAnimatedComponent(MapView);
 

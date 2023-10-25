@@ -89,13 +89,6 @@ export type MapViewProps = ViewProps & {
      */
     legalLabelInsets?: EdgePadding;
     /**
-     * Enables lite mode on Android
-     *
-     * @platform iOS: Not supported
-     * @platform Android: Supported
-     */
-    liteMode?: boolean;
-    /**
      * Sets loading background color.
      *
      * @default `#FFFFFF`

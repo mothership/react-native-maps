@@ -29,7 +29,6 @@ import MapBoundaries from './examples/MapBoundaries';
 import TakeSnapshot from './examples/TakeSnapshot';
 import FitToSuppliedMarkers from './examples/FitToSuppliedMarkers';
 import FitToCoordinates from './examples/FitToCoordinates';
-import LiteMapView from './examples/LiteMapView';
 import CustomTiles from './examples/CustomTiles';
 import WMSTiles from './examples/WMSTiles';
 import ZIndexMarkers from './examples/ZIndexMarkers';
@@ -161,7 +160,6 @@ export default class App extends React.Component<any, any> {
         [MapBoundaries, 'Get visible map boundaries', true],
         [FitToSuppliedMarkers, 'Focus Map On Markers', true],
         [FitToCoordinates, 'Fit Map To Coordinates', true],
-        [LiteMapView, 'Android Lite MapView'],
         [CustomTiles, 'Custom Tiles', true],
         [WMSTiles, 'WMS Tiles', true],
         [ZIndexMarkers, 'Position Markers with Z-index', true],
