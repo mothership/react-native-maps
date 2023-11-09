@@ -103,7 +103,7 @@ public class NavigationMapView extends FrameLayout {
   public void setNavigationVoiceMuted(int navigationVoiceMuted) {
     this.navigationVoiceMuted = navigationVoiceMuted;
     audioGuidance = navigationVoiceMuted != 0 ? Navigator.AudioGuidance.SILENT : Navigator.AudioGuidance.VOICE_ALERTS_AND_GUIDANCE;
-    if (mNavigator != null &&  mNavigator.isGuidanceRunning()) {
+    if (mNavigator != null && mNavigator.isGuidanceRunning()) {
       mNavigator.setAudioGuidance(audioGuidance);
     }
   }
@@ -133,7 +133,7 @@ public class NavigationMapView extends FrameLayout {
   }
 
   public void recenter() {
-    if (mGoogleMap != null) {
+    if (mGoogleMap != null && mNavigator != null) {
       mGoogleMap.followMyLocation(GoogleMap.CameraPerspective.TILTED);
       sendShowResumeButton(false);
     }
@@ -159,14 +159,18 @@ public class NavigationMapView extends FrameLayout {
       //mNavigator.getSimulator().unsetUserLocation();
       mNavigator.cleanup();
     }
+    mNavigator = null
+    navigationView = null;
   }
 
   @Override
   protected void onAttachedToWindow() {
     super.onAttachedToWindow();
 
-    navigationView.onStart();
-    startNavigationIfAllCoordinatesSet();
+    if (navigationView != null) {
+      navigationView.onStart();
+      startNavigationIfAllCoordinatesSet();
+    }
   }
 
   private void sendShowResumeButton(boolean showResumeButton) {
@@ -192,6 +196,9 @@ public class NavigationMapView extends FrameLayout {
   }
 
   private void sendCurrentNavigationInfo() {
+    if (mNavigator == null) {
+      return;
+    }
     WritableMap event = Arguments.createMap();
     event.putDouble("distanceRemaining", (double)mNavigator.getCurrentTimeAndDistance().getMeters());
     event.putDouble("durationRemaining", (double)mNavigator.getCurrentTimeAndDistance().getSeconds());
@@ -238,6 +245,10 @@ public class NavigationMapView extends FrameLayout {
         }
 
         if (waypoint == null) {
+          return;
+        }
+
+        if (navigationView == null) {
           return;
         }
 
@@ -296,7 +307,7 @@ public class NavigationMapView extends FrameLayout {
         arrivalListener = new Navigator.ArrivalListener() {
           @Override
           public void onArrival(ArrivalEvent arrivalEvent) {
-            if (arrivalEvent.isFinalDestination()) {
+            if (arrivalEvent.isFinalDestination() && mNavigator != null) {
               mNavigator.stopGuidance();
 
               // Stop simulating vehicle movement.
@@ -326,7 +337,7 @@ public class NavigationMapView extends FrameLayout {
         result.setOnResultListener(new ListenableResultFuture.OnResultListener<Navigator.RouteStatus>() {
           @Override
           public void onResult(Navigator.RouteStatus routeStatus) {
-            if (routeStatus == Navigator.RouteStatus.OK) {
+            if (routeStatus == Navigator.RouteStatus.OK && mNavigator != null) {
               // send event
               sendLoadRouteEvent();
 
