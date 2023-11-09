@@ -159,7 +159,7 @@ public class NavigationMapView extends FrameLayout {
       //mNavigator.getSimulator().unsetUserLocation();
       mNavigator.cleanup();
     }
-    mNavigator = null
+    mNavigator = null;
     navigationView = null;
   }
 
