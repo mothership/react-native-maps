@@ -1171,6 +1171,7 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
                 new DisplayOptions().showTrafficLights(showTrafficLights).showStopSigns(showStopSigns);
 
         // Navigate to the waypoint
+        final boolean destinationIsPlaceIdFinal = destinationIsPlaceId;
         ListenableResultFuture<Navigator.RouteStatus> result = mNavigator.setDestination(waypoint, mRoutingOptions, mDisplayOptions);
         result.setOnResultListener(new ListenableResultFuture.OnResultListener<Navigator.RouteStatus>() {
           @Override
@@ -1186,7 +1187,7 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
 
               mNavigator.startGuidance();
             } else {
-              if (destinationIsPlaceId && toLatitude != 0 && toLongitude != 0) {
+              if (destinationIsPlaceIdFinal && toLatitude != 0 && toLongitude != 0) {
                 // Try now with coordiantes
                 Waypoint alternativeWaypoint = Waypoint.builder().setLatLng(
                         toLatitude, toLongitude
