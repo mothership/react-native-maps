@@ -1029,8 +1029,10 @@ id regionAsJSON(MKCoordinateRegion region) {
         
         // Setup destination
         NSMutableArray<GMSNavigationWaypoint *>* destinations = [NSMutableArray array];
+        BOOL destinationIsPlaceId = false;
         if (placeId != nil) {
             [destinations addObject:[[GMSNavigationWaypoint alloc] initWithPlaceID:placeId title:@""]];
+            destinationIsPlaceId = true;
         } else if (coordinate.latitude != 0 && coordinate.longitude != 0) {
             [destinations addObject:[[GMSNavigationWaypoint alloc] initWithLocation:coordinate title:@""]];
         }
@@ -1068,9 +1070,38 @@ id regionAsJSON(MKCoordinateRegion region) {
         // Start navigation
         [self.navigator setDestinations:destinations callback:^(GMSRouteStatus routeStatus) {
             if (routeStatus != GMSRouteStatusOK) {
+                if (destinationIsPlaceId && coordinate.latitude != 0 && coordinate.longitude != 0) {
+                    // Try with coordinates now
+                    NSMutableArray<GMSNavigationWaypoint *>* destinationsAlternative = [NSMutableArray array];
+                    [destinationsAlternative addObject:[[GMSNavigationWaypoint alloc] initWithLocation:coordinate title:@""]];
+                    [self.navigator setDestinations:destinationsAlternative callback:^(GMSRouteStatus routeStatus) {
+                        if (routeStatus != GMSRouteStatusOK) {
+                            // If coordinates also failed, nothing we can do
+                            if (self.onNavigationRouteFailedToLoad) {
+                                self.onNavigationRouteFailedToLoad(@{});
+                            }
+                            return;
+                        }
+
+                        // Route found
+                        if (self.onNavigationRouteLoaded) {
+                            self.onNavigationRouteLoaded(@{});
+                        }
+
+                        [self.navigator setGuidanceActive:true];
+                        [self setCameraMode:GMSNavigationCameraModeFollowing];
+                    }];
+                    return;
+                }
+
+                // Failed
+                if (self.onNavigationRouteFailedToLoad) {
+                    self.onNavigationRouteFailedToLoad(@{});
+                }
                 return;
             }
             
+            // Route found
             if (self.onNavigationRouteLoaded) {
                 self.onNavigationRouteLoaded(@{});
             }

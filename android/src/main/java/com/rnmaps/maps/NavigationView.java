@@ -1086,6 +1086,7 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
         mNavigator = navigator;
 
         // Create the waypoint and if it fails, return early
+        boolean destinationIsPlaceId = false;
         Waypoint waypoint = null;
         boolean waypointCreated = false;
         if (toPlaceId != null) {
@@ -1094,6 +1095,7 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
                     toPlaceId
             ).build();
             waypointCreated = true;
+            destinationIsPlaceId = true;
           } catch(Exception e) {}
         }
         if (!waypointCreated && toLatitude != 0 && toLongitude != 0) {
@@ -1183,6 +1185,38 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
               //mNavigator.getSimulator().simulateLocationsAlongExistingRoute();
 
               mNavigator.startGuidance();
+            } else {
+              if (destinationIsPlaceId && toLatitude != 0 && toLongitude != 0) {
+                // Try now with coordiantes
+                Waypoint alternativeWaypoint = Waypoint.builder().setLatLng(
+                        toLatitude, toLongitude
+                ).build();
+                ListenableResultFuture<Navigator.RouteStatus> result = mNavigator.setDestination(alternativeWaypoint, mRoutingOptions, mDisplayOptions);
+                result.setOnResultListener(new ListenableResultFuture.OnResultListener<Navigator.RouteStatus>() {
+                  @Override
+                  public void onResult(Navigator.RouteStatus routeStatus) {
+                    if (routeStatus == Navigator.RouteStatus.OK) {
+                      // send event
+                      sendLoadRouteEvent();
+
+                      // Audio guidance
+                      mNavigator.setAudioGuidance(Navigator.AudioGuidance.VOICE_ALERTS_AND_GUIDANCE);
+
+                      //mNavigator.getSimulator().simulateLocationsAlongExistingRoute();
+
+                      mNavigator.startGuidance();
+                    } else {
+                      // Failed
+                      // send event
+                      sendFailedToLoadRouteEvent();
+                    }
+                  }
+                });
+              } else {
+                // Failed
+                // send event
+                sendFailedToLoadRouteEvent();
+              }
             }
           }
         });
@@ -1212,6 +1246,11 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
   private void sendLoadRouteEvent() {
     WritableMap event = new WritableNativeMap();
     manager.pushEvent(context, this, "onNavigationRouteLoaded", event);
+  }
+
+  private void sendFailedToLoadRouteEvent() {
+    WritableMap event = new WritableNativeMap();
+    manager.pushEvent(context, this, "onNavigationRouteFailedToLoad", event);
   }
 
   private void sendCurrentNavigationInfo() {

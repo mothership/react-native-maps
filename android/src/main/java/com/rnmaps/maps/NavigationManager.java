@@ -462,6 +462,7 @@ public class NavigationManager extends ViewGroupManager<NavigationView> {
     map.putAll(MapBuilder.of(
         "onShowRecenterButton", MapBuilder.of("registrationName", "onShowRecenterButton"),
         "onNavigationRouteLoaded", MapBuilder.of("registrationName", "onNavigationRouteLoaded"),
+        "onNavigationRouteFailedToLoad", MapBuilder.of("registrationName", "onNavigationRouteFailedToLoad"),
         "onNavigationInfoUpdated", MapBuilder.of("registrationName", "onNavigationInfoUpdated"),
         "onArrivedToDestination", MapBuilder.of("registrationName", "onArrivedToDestination")
     ));

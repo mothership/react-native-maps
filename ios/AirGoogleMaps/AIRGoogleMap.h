@@ -76,6 +76,7 @@
 // Navigation events
 @property (nonatomic, copy) RCTDirectEventBlock onShowRecenterButton;
 @property (nonatomic, copy) RCTDirectEventBlock onNavigationRouteLoaded;
+@property (nonatomic, copy) RCTDirectEventBlock onNavigationRouteFailedToLoad;
 @property (nonatomic, copy) RCTDirectEventBlock onNavigationInfoUpdated;
 @property (nonatomic, copy) RCTDirectEventBlock onArrivedToDestination;
 

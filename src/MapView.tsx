@@ -751,6 +751,14 @@ export type MapViewProps = ViewProps & {
   onNavigationRouteLoaded?: (event: NativeSyntheticEvent<{}>) => void;
 
   /**
+   * Callback that is called when the navigation route to the destination has failed to load.
+   *
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  onNavigationRouteFailedToLoad?: (event: NativeSyntheticEvent<{}>) => void;
+
+  /**
    * Callback that is called when the navigation ETA changes.
    *
    * @platform iOS: Google Maps only
