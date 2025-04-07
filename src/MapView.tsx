@@ -31,6 +31,8 @@ import {
   Point,
   Provider,
   Region,
+  ShowRecenterButtonEvent,
+  NavigationInfoUpdatedEvent,
 } from './sharedTypes';
 import {
   Address,
@@ -173,14 +175,6 @@ export type MapViewProps = ViewProps & {
    * @platform Android: Not supported
    */
   legalLabelInsets?: EdgePadding;
-
-  /**
-   * Enables lite mode on Android
-   *
-   * @platform iOS: Not supported
-   * @platform Android: Supported
-   */
-  liteMode?: boolean;
 
   /**
    * https://developers.google.com/maps/documentation/get-map-id
@@ -487,15 +481,6 @@ export type MapViewProps = ViewProps & {
   pitchEnabled?: boolean;
 
   /**
-   * The map framework to use.
-   * Either `"google"` for GoogleMaps, otherwise `undefined` to use the native map framework (`MapKit` in iOS and `GoogleMaps` in android).
-   *
-   * @platform iOS: Supported
-   * @platform Android: Supported
-   */
-  provider?: Provider;
-
-  /**
    * The region to be displayed by the map.
    * The region is defined by the center coordinates and the span of coordinates to display.
    *
@@ -735,6 +720,111 @@ export type MapViewProps = ViewProps & {
    * @platform Android: Not supported
    */
   cameraZoomRange?: CameraZoomRange;
+
+  /**
+   * If `true`, the map will be displayed in Navigation mode (in case Terms and conditions have been accepted).
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  navigationModeEnabled?: boolean;
+
+  /**
+   * If `true`, while navigating, the map will show a progress bar representing the trip distance and traffic along the route.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  showsNavigationTripProgressBar?: boolean;
+
+  /**
+   * If `true`, traffic lights will be displayed on the map.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  showsTrafficLights?: boolean;
+
+  /**
+   * If `true`, stop signs will be displayed on the map.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  showsStopSigns?: boolean;
+
+  /**
+   * If `true`, speedometer will be displayed on the map (only while the Recenter button is not shown).
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  showsSpeedometer?: boolean;
+
+  /**
+   * If `true`, speed limit will be displayed on the map (only while the Recenter button is not shown).
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  showsSpeedLimit?: boolean;
+
+  /**
+   * If `true`, while map is in navigation mode, you will hear NO voice guidande.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  navigationVoiceMuted?: boolean;
+
+  /**
+   * Callback that is called when the Recenter button changes its visibility.
+   *
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  onShowRecenterButton?: (event: ShowRecenterButtonEvent) => void;
+
+  /**
+   * Callback that is called when the navigation route to the destination has been loaded.
+   *
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  onNavigationRouteLoaded?: (event: NativeSyntheticEvent<{}>) => void;
+
+  /**
+   * Callback that is called when the navigation route to the destination has failed to load.
+   *
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  onNavigationRouteFailedToLoad?: (event: NativeSyntheticEvent<{}>) => void;
+
+  /**
+   * Callback that is called when the navigation ETA changes.
+   *
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  onNavigationInfoUpdated?: (event: NavigationInfoUpdatedEvent) => void;
+
+  /**
+   * Callback that is called when the user arrives to their destination using navigation.
+   *
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  onArrivedToDestination?: (event: NativeSyntheticEvent<{}>) => void;
+
+
 };
 
 type ModifiedProps = Modify<
@@ -747,7 +837,7 @@ type ModifiedProps = Modify<
 
 export type NativeProps = Omit<
   ModifiedProps,
-  'customMapStyle' | 'onRegionChange' | 'onRegionChangeComplete'
+  'customMapStyle' | 'onRegionChange' | 'onRegionChangeComplete' | 'navigationModeEnabled'
 > & {
   ref: React.RefObject<MapViewNativeComponentType>;
   customMapStyleString?: string;
@@ -1060,8 +1150,26 @@ class MapView extends React.Component<MapViewProps, State> {
     };
   }
 
+  startNavigation(coordinate: LatLng, placeId?: string) {
+    if (this.map.current) {
+      Commands.startNavigation(
+        this.map.current,
+        coordinate,
+        placeId,
+      );
+    }
+  }
+
+  recenter() {
+    if (this.map.current) {
+      Commands.recenter(
+        this.map.current,
+      );
+    }
+  }
+
   private _mapManagerCommand(name: NativeCommandName) {
-    return NativeModules[`${getNativeMapName(this.props.provider)}Manager`][
+    return NativeModules[`${getNativeMapName(this.props.navigationModeEnabled || false)}Manager`][
       name
     ];
   }
@@ -1087,7 +1195,6 @@ class MapView extends React.Component<MapViewProps, State> {
         initialRegion: null,
         onChange: this._onChange,
         onMapReady: this._onMapReady,
-        liteMode: this.props.liteMode,
         googleMapId: this.props.googleMapId,
         googleRenderer: this.props.googleRenderer,
         ref: this.map,
@@ -1096,14 +1203,6 @@ class MapView extends React.Component<MapViewProps, State> {
           : undefined,
         ...this.props,
       };
-      if (
-        Platform.OS === 'ios' &&
-        props.provider === ProviderConstants.PROVIDER_DEFAULT &&
-        props.mapType &&
-        GOOGLE_MAPS_ONLY_TYPES.includes(props.mapType)
-      ) {
-        props.mapType = MAP_TYPES.STANDARD;
-      }
       if (props.onPanDrag) {
         props.handlePanDrag = !!props.onPanDrag;
       }
@@ -1111,7 +1210,6 @@ class MapView extends React.Component<MapViewProps, State> {
       props = {
         style: this.props.style,
         region: null,
-        liteMode: this.props.liteMode,
         googleMapId: this.props.googleMapId,
         googleRenderer: this.props.googleRenderer,
         initialRegion: this.props.initialRegion || null,
@@ -1126,10 +1224,10 @@ class MapView extends React.Component<MapViewProps, State> {
       };
     }
 
-    const AIRMap = getNativeMapComponent(this.props.provider);
+    const AIRMap = getNativeMapComponent(this.props.navigationModeEnabled || false);
 
     return (
-      <ProviderContext.Provider value={this.props.provider}>
+      <ProviderContext.Provider value={'google'}>
         <AIRMap {...props} />
       </ProviderContext.Provider>
     );
@@ -1137,23 +1235,26 @@ class MapView extends React.Component<MapViewProps, State> {
 }
 
 const airMaps: {
-  default: HostComponent<NativeProps>;
-  google: NativeComponent<NativeProps>;
+  googleMapView: NativeComponent<NativeProps>;
+  googleNavigationView: NativeComponent<NativeProps>;
 } = {
-  default: requireNativeComponent<NativeProps>('AIRMap'),
-  google: () => null,
+  googleMapView: () => null,
+  googleNavigationView: () => null,
+
 };
 if (Platform.OS === 'android') {
-  airMaps.google = airMaps.default;
+  airMaps.googleMapView = requireNativeComponent<NativeProps>('AIRMap');
+  airMaps.googleNavigationView = requireNativeComponent<NativeProps>('AIRNavigationMap');
 } else {
-  airMaps.google = googleMapIsInstalled
+  airMaps.googleMapView = googleMapIsInstalled
     ? requireNativeComponent<NativeProps>('AIRGoogleMap')
     : createNotSupportedComponent(
         'react-native-maps: AirGoogleMaps dir must be added to your xCode project to support GoogleMaps on iOS.',
       );
+  airMaps.googleNavigationView = airMaps.googleMapView;
 }
-const getNativeMapComponent = (provider: Provider) =>
-  airMaps[provider || 'default'];
+const getNativeMapComponent = (navigationMode: boolean) =>
+  airMaps[navigationMode ? 'googleNavigationView' : 'googleMapView'];
 
 export const AnimatedMapView = RNAnimated.createAnimatedComponent(MapView);
 

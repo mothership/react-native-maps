@@ -28,18 +28,15 @@ export const NOT_SUPPORTED: ImplementationStatus = 'NOT_SUPPORTED';
 
 export const ProviderContext = createContext<Provider>(undefined);
 
-export function getNativeMapName(provider: Provider) {
+export function getNativeMapName(navigationMode: boolean) {
   if (Platform.OS === 'android') {
-    return 'AIRMap';
+    return navigationMode ? 'AIRNavigationMap' : 'AIRMap';
   }
-  if (provider === PROVIDER_GOOGLE) {
-    return 'AIRGoogleMap';
-  }
-  return 'AIRMap';
+  return 'AIRGoogleMap';
 }
 
-function getNativeComponentName(provider: Provider, component: ComponentName) {
-  return `${getNativeMapName(provider)}${component}`;
+function getNativeComponentName(component: ComponentName) {
+  return `${getNativeMapName(false)}${component}`;
 }
 
 export const createNotSupportedComponent = (message: string) => () => {
@@ -48,7 +45,7 @@ export const createNotSupportedComponent = (message: string) => () => {
 };
 
 export const googleMapIsInstalled = !!UIManager.hasViewManagerConfig(
-  getNativeMapName(PROVIDER_GOOGLE),
+  getNativeMapName(false),
 );
 
 export default function decorateMapComponent<Type extends Component>(
@@ -61,7 +58,7 @@ export default function decorateMapComponent<Type extends Component>(
   } = {};
 
   const getDefaultComponent = () =>
-    requireNativeComponent(getNativeComponentName(undefined, componentName));
+    requireNativeComponent(getNativeComponentName(componentName));
 
   Component.contextType = ProviderContext;
 
@@ -85,7 +82,6 @@ export default function decorateMapComponent<Type extends Component>(
       }
       const platformSupport = providerInfo[Platform.OS];
       const nativeComponentName = getNativeComponentName(
-        provider,
         componentName,
       );
       if (platformSupport === NOT_SUPPORTED) {
@@ -114,7 +110,6 @@ export default function decorateMapComponent<Type extends Component>(
     name: string,
   ): UIManagerCommand {
     const nativeComponentName = getNativeComponentName(
-      this.context,
       componentName,
     );
     return UIManager.getViewManagerConfig(nativeComponentName).Commands[name];
@@ -124,7 +119,6 @@ export default function decorateMapComponent<Type extends Component>(
     name: string,
   ): MapManagerCommand {
     const nativeComponentName = `${getNativeComponentName(
-      this.context,
       componentName,
     )}Manager`;
     return NativeModules[nativeComponentName][name];
