@@ -20,8 +20,6 @@
 {
   if (self = [super init]) {
     _polyline = [[AIRGMSPolyline alloc] init];
-    _polyline.spans = @[[GMSStyleSpan spanWithColor:_strokeColor]];
-    _polyline.strokeColor = _strokeColor;
   }
   return self;
 }
