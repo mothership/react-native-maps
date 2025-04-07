@@ -134,7 +134,7 @@ public class NavigationMapView extends FrameLayout {
 
   public void recenter() {
     if (mGoogleMap != null && mNavigator != null) {
-      mGoogleMap.followMyLocation(GoogleMap.CameraPerspective.TILTED);
+      mGoogleMap.followMyLocation(0);
       sendShowResumeButton(false);
     }
   }
@@ -260,7 +260,7 @@ public class NavigationMapView extends FrameLayout {
             mGoogleMap = googleMap;
             googleMap.setTrafficEnabled(true);
             googleMap.getUiSettings().setCompassEnabled(showCompassButton != 0);
-            googleMap.followMyLocation(GoogleMap.CameraPerspective.TILTED);
+            googleMap.followMyLocation(0);
             googleMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
                 @Override
                 public void onCameraMoveStarted(int reason) {
