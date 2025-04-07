@@ -12,10 +12,11 @@
 #import <React/RCTBridge.h>
 #import <GoogleMaps/GoogleMaps.h>
 #import <MapKit/MapKit.h>
+#import <CoreLocation/CoreLocation.h>
 #import "AIRGMSMarker.h"
 #import "RCTConvert+AirMap.h"
 
-@interface AIRGoogleMap : GMSMapView
+@interface AIRGoogleMap : GMSMapView<GMSMapViewDelegate>
 
 // TODO: don't use MK region?
 @property (nonatomic, weak) RCTBridge *bridge;
@@ -66,6 +67,22 @@
 @property (nonatomic, assign) BOOL showsIndoorLevelPicker;
 @property (nonatomic, assign) NSString *kmlSrc;
 
+// Navigation properties
+@property (nonatomic, assign) BOOL navigationModeEnabled;
+@property (nonatomic, assign) BOOL showsNavigationTripProgressBar;
+@property (nonatomic, assign) BOOL showsTrafficLights;
+@property (nonatomic, assign) BOOL showsStopSigns;
+@property (nonatomic, assign) BOOL showsSpeedometer;
+@property (nonatomic, assign) BOOL showsSpeedLimit;
+@property (nonatomic, assign) BOOL navigationVoiceMuted;
+
+// Navigation events
+@property (nonatomic, copy) RCTDirectEventBlock onShowRecenterButton;
+@property (nonatomic, copy) RCTDirectEventBlock onNavigationRouteLoaded;
+@property (nonatomic, copy) RCTDirectEventBlock onNavigationRouteFailedToLoad;
+@property (nonatomic, copy) RCTDirectEventBlock onNavigationInfoUpdated;
+@property (nonatomic, copy) RCTDirectEventBlock onArrivedToDestination;
+
 - (void)didPrepareMap;
 - (void)mapViewDidFinishTileRendering;
 - (BOOL)didTapMarker:(GMSMarker *)marker;
@@ -84,6 +101,11 @@
 
 - (NSDictionary*) getMarkersFramesWithOnlyVisible:(BOOL)onlyVisible;
 - (instancetype)initWithMapId:(NSString *)mapId initialCamera:(GMSCameraPosition*) camera backgroundColor:(UIColor *) backgroundColor andZoomTapEnabled:(BOOL)zoomTapEnabled;
+
+// Navigation exported methods
+- (void) startNavigationWithCoordinate:(CLLocationCoordinate2D)coordinate andPlaceId:(NSString *)placeId;
+- (void) recenter;
+
 @end
 
 #endif
