@@ -1175,7 +1175,7 @@ public static CameraPosition cameraPositionFromMap(ReadableMap camera){
 
   public void recenter() {
     if (map != null) {
-      map.followMyLocation(GoogleMap.CameraPerspective.TILTED);
+      map.followMyLocation(0);
       sendShowRecenterButton(false);
     }
   }
@@ -1224,7 +1224,7 @@ public static CameraPosition cameraPositionFromMap(ReadableMap camera){
 
         // Follow user
         if (map != null) {
-          map.followMyLocation(GoogleMap.CameraPerspective.TILTED);
+          map.followMyLocation(0);
         }
 
         // UI settings
