@@ -565,7 +565,7 @@ RCT_EXPORT_METHOD(recenter:(nonnull NSNumber *)reactTag)
 - (void)mapView:(GMSMapView *)mapView willMove:(BOOL)gesture {
   self.isGesture = gesture;
   AIRGoogleMap *googleMapView = (AIRGoogleMap *)mapView;
-  [googleMapView willMove:gesture];
+  [googleMapView mapView:mapView willMove:gesture];
 }
 
 - (void)mapViewDidStartTileRendering:(GMSMapView *)mapView {

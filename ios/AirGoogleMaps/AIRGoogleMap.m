@@ -1203,6 +1203,10 @@ id regionAsJSON(MKCoordinateRegion region) {
 }
 
 - (void)mapView:(GMSMapView *)mapView willMove:(BOOL)gesture {
+    id event = @{@"isGesture": [NSNumber numberWithBool:gesture]};
+    if (self.onRegionChangeStart) self.onRegionChangeStart(event);
+
+    // Show recenter button
     if (![mapView.navigator isGuidanceActive]) {
         return;
     }
