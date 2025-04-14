@@ -369,7 +369,7 @@ public class NavigationManager extends ViewGroupManager<NavigationView> {
     }
 
     @Override
-    public void receiveCommand(@NonNull MapView view, String commandId, @Nullable ReadableArray args) {
+    public void receiveCommand(@NonNull NavigationView view, String commandId, @Nullable ReadableArray args) {
         int duration;
         double lat;
         double lng;
