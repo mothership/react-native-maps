@@ -70,6 +70,20 @@ interface NativeCommands {
     >,
     activeLevelIndex: number,
   ) => void;
+
+  startNavigation: (
+    viewRef: NonNullable<
+      React.RefObject<MapViewNativeComponentType>['current']
+    >,
+    coordinate: LatLng,
+    placeId?: string,
+  ) => void;
+
+  recenter: (
+    viewRef: NonNullable<
+      React.RefObject<MapViewNativeComponentType>['current']
+    >,
+  ) => void;
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
@@ -82,5 +96,7 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
     'fitToCoordinates',
     'setMapBoundaries',
     'setIndoorActiveLevelIndex',
+    'recenter',
+    'startNavigation',
   ],
 });

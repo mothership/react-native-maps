@@ -465,14 +465,6 @@ export interface MapFabricNativeProps extends ViewProps {
   legalLabelInsets?: EdgePadding;
 
   /**
-   * Enables lite mode on Android
-   *
-   * @platform iOS: Not supported
-   * @platform Android: Supported
-   */
-  liteMode?: boolean;
-
-  /**
    * https://developers.google.com/maps/documentation/get-map-id
    * google cloud mapId to enable cloud styling and more
    */
