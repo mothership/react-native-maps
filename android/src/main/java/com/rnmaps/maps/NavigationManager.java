@@ -339,17 +339,17 @@ public class NavigationManager extends ViewGroupManager<NavigationView> {
     }
 
     @ReactProp(name = "showsNavigationTripProgressBar", defaultBoolean = false)
-    public void setShowsNavigationTripProgressBar(MapView view, boolean showsNavigationTripProgressBar) {
+    public void setShowsNavigationTripProgressBar(NavigationView view, boolean showsNavigationTripProgressBar) {
         view.setShowsNavigationTripProgressBar(showsNavigationTripProgressBar);
     }
 
     @ReactProp(name = "showsTrafficLights", defaultBoolean = false)
-    public void setShowsTrafficLights(MapView view, boolean showsTrafficLights) {
+    public void setShowsTrafficLights(NavigationView view, boolean showsTrafficLights) {
         view.setShowsTrafficLights(showsTrafficLights);
     }
 
     @ReactProp(name = "showsStopSigns", defaultBoolean = false)
-    public void setShowsStopSigns(MapView view, boolean showsStopSigns) {
+    public void setShowsStopSigns(NavigationView view, boolean showsStopSigns) {
         view.setShowsStopSigns(showsStopSigns);
     }
 
