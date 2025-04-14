@@ -157,7 +157,6 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
     private final Map<TileOverlay, MapHeatmap> heatmapMap = new HashMap<>();
     private final Map<TileOverlay, MapGradientPolyline> gradientPolylineMap = new HashMap<>();
     private final GestureDetectorCompat gestureDetector;
-    private final NavigationManager manager;
     private boolean paused = false;
     private boolean destroyed = false;
     private final ThemedReactContext context;
@@ -283,13 +282,12 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
         if (activity instanceof LifecycleOwner) {
             ((LifecycleOwner) activity).getLifecycle().addObserver(this);
         }
-        super.getMapAsync(this);
 
         final NavigationView view = this;
 
-        onCreate(null);
-        onStart();
-        getMapAsync(this);
+        super.onCreate(null);
+        super.onStart();
+        super.getMapAsync(this);
 
         fusedLocationSource = new FusedLocationSource(context);
 
@@ -322,7 +320,6 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
             }
         });
 
-
         // Set up a parent view for triggering visibility in subviews that depend on it.
         // Mainly ReactImageView depends on Fresco which depends on onVisibilityChanged() event
         attacherGroup = new ViewAttacherGroup(context);
@@ -340,8 +337,7 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
     public NavigationView(ThemedReactContext reactContext, ReactApplicationContext appContext,
                    NavigationManager manager,
                    GoogleMapOptions googleMapOptions) {
-        // this(null, googleMapOptions);
-        this(null);
+        this(null, googleMapOptions);
     }
 
     public double[][] getMarkersFrames(boolean onlyVisible) {
@@ -1563,22 +1559,22 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
       private void sendShowRecenterButton(boolean showResumeButton) {
         WritableMap event = new WritableNativeMap();
         event.putBoolean("showRecenterButton", showResumeButton);
-        manager.pushEvent(context, this, "onShowRecenterButton", event);
+        // manager.pushEvent(context, this, "onShowRecenterButton", event);
       }
 
       private void sendArrivalEvent() {
         WritableMap event = new WritableNativeMap();
-        manager.pushEvent(context, this, "onArrivedToDestination", event);
+        // manager.pushEvent(context, this, "onArrivedToDestination", event);
       }
 
       private void sendLoadRouteEvent() {
         WritableMap event = new WritableNativeMap();
-        manager.pushEvent(context, this, "onNavigationRouteLoaded", event);
+        // manager.pushEvent(context, this, "onNavigationRouteLoaded", event);
       }
 
       private void sendFailedToLoadRouteEvent() {
         WritableMap event = new WritableNativeMap();
-        manager.pushEvent(context, this, "onNavigationRouteFailedToLoad", event);
+        // manager.pushEvent(context, this, "onNavigationRouteFailedToLoad", event);
       }
 
       private void sendCurrentNavigationInfo() {
@@ -1588,7 +1584,7 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
         WritableMap event = new WritableNativeMap();
         event.putInt("distanceRemaining", mNavigator.getCurrentTimeAndDistance().getMeters());
         event.putInt("durationRemaining", mNavigator.getCurrentTimeAndDistance().getSeconds());
-        manager.pushEvent(context, this, "onNavigationInfoUpdated", event);
+        // manager.pushEvent(context, this, "onNavigationInfoUpdated", event);
       }
 
 

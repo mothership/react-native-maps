@@ -100,7 +100,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-base:${safeExtGet('googlePlayServicesBaseVersion', '18.5.0')}"
 //     implementation "com.google.android.gms:play-services-maps:${safeExtGet('googlePlayServicesMapsVersion', '19.1.0')}"
     implementation "com.google.android.gms:play-services-location:${safeExtGet('googlePlayServicesLocationVersion', '21.3.0')}"
-    implementation "com.google.android.libraries.navigation:navigation:6.2.0"
+    implementation "com.google.android.libraries.navigation:navigation:6.1.0"
     implementation('com.google.maps.android:android-maps-utils:3.10.0')  {
         exclude group: 'com.google.android.gms', module: 'play-services-maps'
       }
