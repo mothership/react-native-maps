@@ -24,6 +24,7 @@ import {
   MarkerSelectEvent,
   Point,
   Region,
+  Provider,
   ShowRecenterButtonEvent,
   NavigationInfoUpdatedEvent,
 } from './sharedTypes';
