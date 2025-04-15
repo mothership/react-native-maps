@@ -77,4 +77,6 @@ public interface RNMapsMapViewManagerInterface<T extends View> {
   void setShowsSpeedometer(T view, boolean showsSpeedometer);
   void setShowsSpeedLimit(T view, boolean showsSpeedLimit);
   void setNavigationVoiceMuted(T view, boolean navigationVoiceMuted);
+  void startNavigation(T view, String routeJSON, String placeId);
+  void recenter(T view);
 }

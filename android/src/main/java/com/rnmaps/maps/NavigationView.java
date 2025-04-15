@@ -1490,14 +1490,11 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
 
       private static final int BLACK_COLOR = 0xFF000000;
 
-      public void startNavigation(ReadableMap coord, String toPlaceId) {
+      public void startNavigation(double toLatitude, double toLongitude, String toPlaceId) {
         FragmentActivity activity = (FragmentActivity) context.getCurrentActivity();
         if (activity == null) {
           return;
         }
-
-        double toLatitude = coord.getDouble("latitude");
-        double toLongitude = coord.getDouble("longitude");
 
         NavigationApi.getNavigator(activity, new NavigationApi.NavigatorListener() {
           /**

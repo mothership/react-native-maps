@@ -26,7 +26,6 @@ import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.ViewManagerDelegate;
 import com.facebook.react.viewmanagers.RNMapsMapViewManagerInterface;
 import com.facebook.react.viewmanagers.RNMapsNavigationViewManagerDelegate;
-import com.facebook.react.viewmanagers.;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapsInitializer;
@@ -544,6 +543,23 @@ public class NavigationViewManager extends ViewGroupManager<NavigationView> impl
       @Override
       public void setNavigationVoiceMuted(NavigationView view, boolean navigationVoiceMuted) {
         view.setNavigationVoiceMuted(navigationVoiceMuted);
+      }
+
+      @Override
+      public void startNavigation(NavigationView view, String routeJSON, String placeId) {
+          try {
+              JSONObject coord = new JSONObject(routeJSON);
+              double lat = coord.getDouble("latitude");
+              double lng = coord.getDouble("longitude");
+              view.startNavigation(lat, lng, placeId);
+          } catch (JSONException e) {
+              throw new RuntimeException(e);
+          }
+      }
+
+      @Override
+      public void recenter(NavigationView view) {
+        view.recenter();
       }
 
     @Override

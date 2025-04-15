@@ -55,6 +55,7 @@ import {Commands, MapViewNativeComponentType} from './MapViewNativeComponent';
 
 import FabricMapView, {
   Commands as FabricCommands,
+  MapFabricNativeProps,
 } from './specs/NativeComponentMapView';
 import FabricNavigationView, {
   Commands as FabricNavigationCommands,

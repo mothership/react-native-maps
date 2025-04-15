@@ -514,33 +514,34 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
     public void setCameraZoomRange(MapView view, @Nullable ReadableMap value) {
         // not supported
     }
+
       @Override
-      public void setShowsNavigationTripProgressBar(NavigationView view, boolean showsNavigationTripProgressBar) {
+      public void setShowsNavigationTripProgressBar(MapView view, boolean showsNavigationTripProgressBar) {
         // not supported
       }
 
       @Override
-      public void setShowsTrafficLights(NavigationView view, boolean showsTrafficLights) {
+      public void setShowsTrafficLights(MapView view, boolean showsTrafficLights) {
         // not supported
       }
 
       @Override
-      public void setShowsStopSigns(NavigationView view, boolean showsStopSigns) {
+      public void setShowsStopSigns(MapView view, boolean showsStopSigns) {
         // not supported
       }
 
       @Override
-      public void setShowsSpeedometer(NavigationView view, boolean showsSpeedometer) {
+      public void setShowsSpeedometer(MapView view, boolean showsSpeedometer) {
         // not supported
       }
 
       @Override
-      public void setShowsSpeedLimit(NavigationView view, boolean showsSpeedLimit) {
+      public void setShowsSpeedLimit(MapView view, boolean showsSpeedLimit) {
         // not supported
       }
 
       @Override
-      public void setNavigationVoiceMuted(NavigationView view, boolean navigationVoiceMuted) {
+      public void setNavigationVoiceMuted(MapView view, boolean navigationVoiceMuted) {
         // not supported
       }
 

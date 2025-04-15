@@ -223,7 +223,7 @@ public class RNMapsMapViewManagerDelegate<T extends View, U extends BaseViewMana
         mViewManager.setIndoorActiveLevelIndex(view, args.getInt(0));
         break;
       case "startNavigation":
-        mViewManager.startNavigation(view, args.getString(0), args.getInt(1));
+        mViewManager.startNavigation(view, args.getString(0), args.getString(1));
         break;
       case "recenter":
         mViewManager.recenter(view);

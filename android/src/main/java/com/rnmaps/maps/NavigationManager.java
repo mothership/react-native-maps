@@ -465,7 +465,9 @@ public class NavigationManager extends ViewGroupManager<NavigationView> {
                 if (args == null) {
                     break;
                 }
-                view.startNavigation(args.getMap(0), args.getString(1));
+                double toLatitude = args.getMap(0).getDouble("latitude");
+                double toLongitude = args.getMap(0).getDouble("longitude");
+                view.startNavigation(toLatitude, toLongitude, args.getString(1));
                 break;
         }
     }
