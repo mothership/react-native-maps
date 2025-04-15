@@ -74,6 +74,18 @@ public:
 #endif
 };
 
+class RNMapsNavigationViewState {
+public:
+  RNMapsNavigationViewState() = default;
+
+#ifdef ANDROID
+  RNMapsNavigationViewState(RNMapsNavigationViewState const &previousState, folly::dynamic data){};
+  folly::dynamic getDynamic() const {
+    return {};
+  };
+#endif
+};
+
 class RNMapsMarkerState {
 public:
   RNMapsMarkerState() = default;

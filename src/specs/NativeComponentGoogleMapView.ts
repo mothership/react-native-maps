@@ -1021,7 +1021,7 @@ export interface NativeCommands {
   ) => void;
   startNavigation: (
     viewRef: React.ElementRef<React.ComponentType>,
-    coordinate: LatLng,
+    coordinatesJSON: string,
     placeId?: string,
   ) => void;
   recenter: (viewRef: React.ElementRef<React.ComponentType>) => void;

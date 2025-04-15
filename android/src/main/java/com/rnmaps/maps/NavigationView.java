@@ -221,12 +221,12 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
 
     @Override
     public void onCreate(LifecycleOwner owner) {
-        super.onCreate(null);
+        //super.onCreate(null);
     }
 
     @Override
     public void onStart(LifecycleOwner owner) {
-        super.onStart();
+        //super.onStart();
     }
 
     @Override
@@ -249,7 +249,7 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
 
     @Override
     public void onPause(LifecycleOwner owner) {
-        super.onPause();
+        //super.onPause();
         if (hasPermissions() && map != null) {
             //noinspection MissingPermission
             map.setMyLocationEnabled(false);
@@ -266,7 +266,7 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
 
     @Override
     public void onStop(LifecycleOwner owner) {
-        super.onStop();
+        //super.onStop();
     }
 
     @Override

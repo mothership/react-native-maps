@@ -1194,9 +1194,14 @@ export interface NativeCommands {
     animated: boolean,
   ) => void;
 
+  setIndoorActiveLevelIndex: (
+    viewRef: React.ElementRef<React.ComponentType>,
+    activeLevelIndex: Int32,
+  ) => void;
+
   startNavigation: (
     viewRef: React.ElementRef<React.ComponentType>,
-    coordinate: LatLng,
+    coordinatesJSON: string,
     placeId?: string,
   ) => void;
 

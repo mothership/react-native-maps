@@ -21,6 +21,7 @@ registry->add(concreteComponentDescriptorProvider<RNMapsCircleComponentDescripto
 registry->add(concreteComponentDescriptorProvider<RNMapsGoogleMapViewComponentDescriptor>());
 registry->add(concreteComponentDescriptorProvider<RNMapsGooglePolygonComponentDescriptor>());
 registry->add(concreteComponentDescriptorProvider<RNMapsMapViewComponentDescriptor>());
+registry->add(concreteComponentDescriptorProvider<RNMapsNavigationViewComponentDescriptor>());
 registry->add(concreteComponentDescriptorProvider<RNMapsMarkerComponentDescriptor>());
 registry->add(concreteComponentDescriptorProvider<RNMapsOverlayComponentDescriptor>());
 registry->add(concreteComponentDescriptorProvider<RNMapsPolylineComponentDescriptor>());

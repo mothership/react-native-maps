@@ -545,6 +545,16 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
         // not supported
       }
 
+      @Override
+      public void startNavigation(MapView view, String routeJSON, String placeId) {
+        // not supported
+      }
+
+      @Override
+      public void recenter(MapView view) {
+        // not supported
+      }
+
     @Override
     public void animateToRegion(MapView view, String regionJSON, int duration) {
         try {
