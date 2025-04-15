@@ -25,7 +25,8 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.ViewManagerDelegate;
 import com.facebook.react.viewmanagers.RNMapsMapViewManagerInterface;
-import com.facebook.react.viewmanagers.RNMapsMapViewManagerDelegate;
+import com.facebook.react.viewmanagers.RNMapsNavigationViewManagerDelegate;
+import com.facebook.react.viewmanagers.;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapsInitializer;
@@ -35,26 +36,26 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapColorScheme;
 import com.rnmaps.maps.MapMarker;
 import com.rnmaps.maps.MapOverlay;
-import com.rnmaps.maps.MapView;
+import com.rnmaps.maps.NavigationView;
 import com.rnmaps.maps.SizeReportingShadowNode;
 
 import java.util.Map;
 
-@ReactModule(name = MapViewManager.REACT_CLASS)
-public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsMapViewManagerInterface<MapView> {
+@ReactModule(name = NavigationViewManager.REACT_CLASS)
+public class NavigationViewManager extends ViewGroupManager<NavigationView> implements RNMapsMapViewManagerInterface<NavigationView> {
 
     private static boolean rendererInitialized = false;
-    private final RNMapsMapViewManagerDelegate<MapView, MapViewManager> delegate =
-            new RNMapsMapViewManagerDelegate<>(this);
+    private final RNMapsNavigationViewManagerDelegate<NavigationView, NavigationViewManager> delegate =
+            new RNMapsNavigationViewManagerDelegate<>(this);
 
 
-    public MapViewManager(ReactApplicationContext context) {
+    public NavigationViewManager(ReactApplicationContext context) {
         super(context);
     }
 
 
     @Override
-    public ViewManagerDelegate<MapView> getDelegate() {
+    public ViewManagerDelegate<NavigationView> getDelegate() {
         return delegate;
     }
 
@@ -64,22 +65,22 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
     }
 
     @Override
-    public MapView createViewInstance(ThemedReactContext context) {
-        return new MapView(context, new GoogleMapOptions());
+    public NavigationView createViewInstance(ThemedReactContext context) {
+        return new NavigationView(context, new GoogleMapOptions());
     }
 
     @Override
-    public int getChildCount(MapView view) {
+    public int getChildCount(NavigationView view) {
         return view.getFeatureCount();
     }
 
     @Override
-    public View getChildAt(MapView view, int index) {
+    public View getChildAt(NavigationView view, int index) {
         return view.getFeatureAt(index);
     }
 
     @Override
-    public void removeViewAt(MapView parent, int index) {
+    public void removeViewAt(NavigationView parent, int index) {
         parent.removeFeatureAt(index);
     }
 
@@ -101,7 +102,7 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
             }
             if (initialProps.getMap("initialCamera") != null) {
                 ReadableMap initialCamera = initialProps.getMap("initialCamera");
-                CameraPosition camera = MapView.cameraPositionFromMap(initialCamera);
+                CameraPosition camera = NavigationView.cameraPositionFromMap(initialCamera);
                 if (camera != null) {
                     options.camera(camera);
                 }
@@ -159,9 +160,9 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
         return options;
     }
     @Override
-    protected MapView createViewInstance(int reactTag, @NonNull ThemedReactContext reactContext, @Nullable ReactStylesDiffMap initialProps, @Nullable StateWrapper stateWrapper) {
-        MapView view = null;
-        view = new MapView(reactContext, optionsForInitialProps(initialProps));
+    protected NavigationView createViewInstance(int reactTag, @NonNull ThemedReactContext reactContext, @Nullable ReactStylesDiffMap initialProps, @Nullable StateWrapper stateWrapper) {
+        NavigationView view = null;
+        view = new NavigationView(reactContext, optionsForInitialProps(initialProps));
         view.setId(reactTag);
         this.addEventEmitters(reactContext, view);
         if (initialProps != null) {
@@ -177,12 +178,12 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
     }
 
 
-    public static final String REACT_CLASS = "RNMapsMapView";
+    public static final String REACT_CLASS = "RNMapsNavigationView";
 
     @Nullable
     @Override
     public Map<String, Object> getExportedCustomBubblingEventTypeConstants() {
-        return MapView.getExportedCustomBubblingEventTypeConstants();
+        return NavigationView.getExportedCustomBubblingEventTypeConstants();
     }
 
 
@@ -196,37 +197,37 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
     @Nullable
     @Override
     public Map<String, Object> getExportedCustomDirectEventTypeConstants() {
-        return MapView.getExportedCustomDirectEventTypeConstants();
+        return NavigationView.getExportedCustomDirectEventTypeConstants();
     }
 
     @Override
-    public void setCacheEnabled(MapView view, boolean value) {
+    public void setCacheEnabled(NavigationView view, boolean value) {
         view.setCacheEnabled(value);
     }
 
     @Override
-    public void setCamera(MapView view, @Nullable ReadableMap value) {
+    public void setCamera(NavigationView view, @Nullable ReadableMap value) {
         view.setCamera(value);
     }
 
     @Override
-    public void setCompassOffset(MapView view, @Nullable ReadableMap value) {
+    public void setCompassOffset(NavigationView view, @Nullable ReadableMap value) {
         // not supported
     }
 
     @Override
-    public void setFollowsUserLocation(MapView view, boolean value) {
+    public void setFollowsUserLocation(NavigationView view, boolean value) {
         // not supported
     }
 
     @Override
-    public void setPoiClickEnabled(MapView view, boolean value) {
+    public void setPoiClickEnabled(NavigationView view, boolean value) {
         view.setPoiClickEnabled(value);
     }
 
     @Override
-    public void setInitialCamera(MapView view, @Nullable ReadableMap value) {
-        CameraPosition camera = MapView.cameraPositionFromMap(value);
+    public void setInitialCamera(NavigationView view, @Nullable ReadableMap value) {
+        CameraPosition camera = NavigationView.cameraPositionFromMap(value);
         if (camera != null) {
             view.setInitialCameraSet(true);
         }
@@ -234,32 +235,32 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
 
 
     @Override
-    public void setInitialRegion(MapView view, @Nullable ReadableMap value) {
+    public void setInitialRegion(NavigationView view, @Nullable ReadableMap value) {
         view.setInitialRegion(value);
     }
 
     @Override
-    public void setKmlSrc(MapView view, @Nullable String value) {
+    public void setKmlSrc(NavigationView view, @Nullable String value) {
         view.setKmlSrc(value);
     }
 
     @Override
-    public void setLegalLabelInsets(MapView view, @Nullable ReadableMap value) {
+    public void setLegalLabelInsets(NavigationView view, @Nullable ReadableMap value) {
         // not supported
     }
 
     @Override
-    public void setLiteMode(MapView view, boolean value) {
+    public void setLiteMode(NavigationView view, boolean value) {
         // do nothing (initialProp)
     }
 
     @Override
-    public void setGoogleMapId(MapView view, @Nullable String value) {
+    public void setGoogleMapId(NavigationView view, @Nullable String value) {
         // do nothing (initialProp)
     }
 
     @Override
-    public void setGoogleRenderer(MapView view, @Nullable String value) {
+    public void setGoogleRenderer(NavigationView view, @Nullable String value) {
         if (!rendererInitialized) {
             MapsInitializer.Renderer renderer = MapsInitializer.Renderer.LATEST;
             if ("LEGACY".equals(value)) {
@@ -272,22 +273,22 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
     }
 
     @Override
-    public void setLoadingBackgroundColor(MapView view, @Nullable Integer value) {
+    public void setLoadingBackgroundColor(NavigationView view, @Nullable Integer value) {
         view.setLoadingBackgroundColor(value);
     }
 
     @Override
-    public void setLoadingEnabled(MapView view, boolean value) {
+    public void setLoadingEnabled(NavigationView view, boolean value) {
         view.setLoadingEnabled(value);
     }
 
     @Override
-    public void setLoadingIndicatorColor(MapView view, @Nullable Integer value) {
+    public void setLoadingIndicatorColor(NavigationView view, @Nullable Integer value) {
         view.setLoadingIndicatorColor(value);
     }
 
     @Override
-    public void setMapPadding(MapView view, @Nullable ReadableMap padding) {
+    public void setMapPadding(NavigationView view, @Nullable ReadableMap padding) {
         int left = 0;
         int top = 0;
         int right = 0;
@@ -316,7 +317,7 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
     }
 
     @Override
-    public void addView(MapView parent, View child, int index) {
+    public void addView(NavigationView parent, View child, int index) {
         if (child instanceof MapMarker && ((MapMarker) child).isLoadingImage()){
             ((MapMarker) child).setImageLoadedListener((uri, drawable, b) -> {
                 parent.addFeature(child, parent.getFeatureCount());
@@ -327,7 +328,7 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
     }
 
     @Override
-    public void setMapType(MapView view, @Nullable String value) {
+    public void setMapType(NavigationView view, @Nullable String value) {
         view.setMapType(mapTypeFromStrValue(value));
     }
 
@@ -351,201 +352,202 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
     }
 
     @Override
-    public void setMaxDelta(MapView view, double value) {
+    public void setMaxDelta(NavigationView view, double value) {
         // not supported
     }
 
     @Override
-    public void setMaxZoom(MapView view, float value) {
+    public void setMaxZoom(NavigationView view, float value) {
         view.setMaxZoomLevel(value);
     }
 
     @Override
-    public void setMinDelta(MapView view, double value) {
+    public void setMinDelta(NavigationView view, double value) {
         // not supported
     }
 
     @Override
-    public void setMinZoom(MapView view, float value) {
+    public void setMinZoom(NavigationView view, float value) {
         view.setMinZoomLevel(value);
     }
 
     @Override
-    public void setMoveOnMarkerPress(MapView view, boolean value) {
+    public void setMoveOnMarkerPress(NavigationView view, boolean value) {
         view.setMoveOnMarkerPress(value);
     }
 
     @Override
-    public void setHandlePanDrag(MapView view, boolean value) {
+    public void setHandlePanDrag(NavigationView view, boolean value) {
         view.setHandlePanDrag(value);
     }
 
     @Override
-    public void setPaddingAdjustmentBehavior(MapView view, @Nullable String value) {
+    public void setPaddingAdjustmentBehavior(NavigationView view, @Nullable String value) {
         // not supported
     }
 
     @Override
-    public void setPitchEnabled(MapView view, boolean value) {
+    public void setPitchEnabled(NavigationView view, boolean value) {
         view.setPitchEnabled(value);
     }
 
     @Override
-    public void setRegion(MapView view, @Nullable ReadableMap value) {
+    public void setRegion(NavigationView view, @Nullable ReadableMap value) {
         view.setRegion(value);
     }
 
     @Override
-    public void setRotateEnabled(MapView view, boolean value) {
+    public void setRotateEnabled(NavigationView view, boolean value) {
         view.setRotateEnabled(value);
     }
 
     @Override
-    public void setScrollDuringRotateOrZoomEnabled(MapView view, boolean value) {
+    public void setScrollDuringRotateOrZoomEnabled(NavigationView view, boolean value) {
         view.setScrollDuringRotateOrZoomEnabled(value);
     }
 
     @Override
-    public void setScrollEnabled(MapView view, boolean value) {
+    public void setScrollEnabled(NavigationView view, boolean value) {
         view.setScrollEnabled(value);
     }
 
     @Override
-    public void setShowsBuildings(MapView view, boolean value) {
+    public void setShowsBuildings(NavigationView view, boolean value) {
         view.setShowBuildings(value);
     }
 
     @Override
-    public void setShowsCompass(MapView view, boolean value) {
+    public void setShowsCompass(NavigationView view, boolean value) {
         view.setShowsCompass(value);
     }
 
     @Override
-    public void setShowsIndoorLevelPicker(MapView view, boolean value) {
+    public void setShowsIndoorLevelPicker(NavigationView view, boolean value) {
         view.setShowsIndoorLevelPicker(value);
     }
 
     @Override
-    public void setShowsIndoors(MapView view, boolean value) {
+    public void setShowsIndoors(NavigationView view, boolean value) {
         view.setShowIndoors(value);
     }
 
     @Override
-    public void setShowsMyLocationButton(MapView view, boolean value) {
+    public void setShowsMyLocationButton(NavigationView view, boolean value) {
         view.setShowsMyLocationButton(value);
     }
 
     @Override
-    public void setShowsScale(MapView view, boolean value) {
+    public void setShowsScale(NavigationView view, boolean value) {
         // not supported
     }
 
     @Override
-    public void setShowsUserLocation(MapView view, boolean value) {
+    public void setShowsUserLocation(NavigationView view, boolean value) {
         view.setShowsUserLocation(value);
     }
 
     @Override
-    public void setTintColor(MapView view, @Nullable Integer value) {
+    public void setTintColor(NavigationView view, @Nullable Integer value) {
         // not supported
     }
 
     @Override
-    public void setToolbarEnabled(MapView view, boolean value) {
+    public void setToolbarEnabled(NavigationView view, boolean value) {
         view.setToolbarEnabled(value);
     }
 
     @Override
-    public void setUserInterfaceStyle(MapView view, @Nullable String value) {
+    public void setUserInterfaceStyle(NavigationView view, @Nullable String value) {
         // do nothing (initialProp)
     }
 
     @Override
-    public void setCustomMapStyleString(MapView view, @Nullable String value) {
+    public void setCustomMapStyleString(NavigationView view, @Nullable String value) {
         view.setMapStyle(value);
     }
 
     @Override
-    public void setUserLocationAnnotationTitle(MapView view, @Nullable String value) {
+    public void setUserLocationAnnotationTitle(NavigationView view, @Nullable String value) {
         // not supported
     }
 
     @Override
-    public void setUserLocationCalloutEnabled(MapView view, boolean value) {
+    public void setUserLocationCalloutEnabled(NavigationView view, boolean value) {
         // not supported
     }
 
     @Override
-    public void setUserLocationFastestInterval(MapView view, int value) {
+    public void setUserLocationFastestInterval(NavigationView view, int value) {
         view.setUserLocationFastestInterval(value);
     }
 
     @Override
-    public void setUserLocationPriority(MapView view, @Nullable String value) {
+    public void setUserLocationPriority(NavigationView view, @Nullable String value) {
         view.setUserLocationPriority(MY_LOCATION_PRIORITY.get(value));
     }
 
     @Override
-    public void setUserLocationUpdateInterval(MapView view, int value) {
+    public void setUserLocationUpdateInterval(NavigationView view, int value) {
         view.setUserLocationUpdateInterval(value);
     }
 
     @Override
-    public void setZoomControlEnabled(MapView view, boolean value) {
+    public void setZoomControlEnabled(NavigationView view, boolean value) {
         view.setZoomControlEnabled(value);
     }
 
     @Override
-    public void setZoomEnabled(MapView view, boolean value) {
+    public void setZoomEnabled(NavigationView view, boolean value) {
         view.setZoomEnabled(value);
     }
 
     @Override
-    public void setShowsTraffic(MapView view, boolean value) {
+    public void setShowsTraffic(NavigationView view, boolean value) {
         view.setShowsTraffic(value);
     }
 
     @Override
-    public void setZoomTapEnabled(MapView view, boolean value) {
+    public void setZoomTapEnabled(NavigationView view, boolean value) {
         // not supported
     }
 
     @Override
-    public void setCameraZoomRange(MapView view, @Nullable ReadableMap value) {
+    public void setCameraZoomRange(NavigationView view, @Nullable ReadableMap value) {
         // not supported
     }
+
       @Override
       public void setShowsNavigationTripProgressBar(NavigationView view, boolean showsNavigationTripProgressBar) {
-        // not supported
+        view.setShowsNavigationTripProgressBar(showsNavigationTripProgressBar);
       }
 
       @Override
       public void setShowsTrafficLights(NavigationView view, boolean showsTrafficLights) {
-        // not supported
+        view.setShowsTrafficLights(showsTrafficLights);
       }
 
       @Override
       public void setShowsStopSigns(NavigationView view, boolean showsStopSigns) {
-        // not supported
+        view.setShowsStopSigns(showsStopSigns);
       }
 
       @Override
       public void setShowsSpeedometer(NavigationView view, boolean showsSpeedometer) {
-        // not supported
+        view.setShowsSpeedometer(showsSpeedometer);
       }
 
       @Override
       public void setShowsSpeedLimit(NavigationView view, boolean showsSpeedLimit) {
-        // not supported
+        view.setShowsSpeedLimit(showsSpeedLimit);
       }
 
       @Override
       public void setNavigationVoiceMuted(NavigationView view, boolean navigationVoiceMuted) {
-        // not supported
+        view.setNavigationVoiceMuted(navigationVoiceMuted);
       }
 
     @Override
-    public void animateToRegion(MapView view, String regionJSON, int duration) {
+    public void animateToRegion(NavigationView view, String regionJSON, int duration) {
         try {
             JSONObject region = new JSONObject(regionJSON);
             double lng = region.getDouble("longitude");
@@ -564,29 +566,29 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
     }
 
     @Override
-    public void setCamera(MapView view, String cameraJSON) {
+    public void setCamera(NavigationView view, String cameraJSON) {
         try {
             JSONObject camera = new JSONObject(cameraJSON);
             CameraPosition position = view.cameraPositionFromJSON(camera);
             view.moveToCamera(position);
         } catch (JSONException e) {
-            Log.e("MapViewManager", "parse camera exception " + e);
+            Log.e("NavigationViewManager", "parse camera exception " + e);
         }
     }
 
     @Override
-    public void animateCamera(MapView view, String cameraJSON, int duration) {
+    public void animateCamera(NavigationView view, String cameraJSON, int duration) {
         try {
             JSONObject camera = new JSONObject(cameraJSON);
             CameraPosition position = view.cameraPositionFromJSON(camera);
             view.animateToCamera(position, duration);
         } catch (JSONException e) {
-            Log.e("MapViewManager", "parse camera exception " + e);
+            Log.e("NavigationViewManager", "parse camera exception " + e);
         }
     }
 
     @Override
-    public void fitToElements(MapView view, String edgePaddingJSON, boolean animated) {
+    public void fitToElements(NavigationView view, String edgePaddingJSON, boolean animated) {
         try {
             WritableMap map = null;
             if (edgePaddingJSON != null) {
@@ -595,13 +597,13 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
             }
             view.fitToElements(map, animated);
         } catch (JSONException e){
-            Log.e("MapViewManager", "parse edgePaddingJSON exception " + e);
+            Log.e("NavigationViewManager", "parse edgePaddingJSON exception " + e);
         }
 
     }
 
     @Override
-    public void fitToSuppliedMarkers(MapView view, String markersJSON, String edgePaddingJSON, boolean animated) {
+    public void fitToSuppliedMarkers(NavigationView view, String markersJSON, String edgePaddingJSON, boolean animated) {
         try {
             WritableArray markers = null;
             if (markersJSON != null) {
@@ -621,7 +623,7 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
     }
 
     @Override
-    public void fitToCoordinates(MapView view, String coordinatesJSON, String edgePaddingJSON, boolean animated) {
+    public void fitToCoordinates(NavigationView view, String coordinatesJSON, String edgePaddingJSON, boolean animated) {
         try {
             WritableArray coordinates = null;
             if (coordinatesJSON != null) {
@@ -640,12 +642,12 @@ public class MapViewManager extends ViewGroupManager<MapView> implements RNMapsM
     }
 
     @Override
-    public void setIndoorActiveLevelIndex(MapView view, int activeLevelIndex) {
+    public void setIndoorActiveLevelIndex(NavigationView view, int activeLevelIndex) {
         view.setIndoorActiveLevelIndex(activeLevelIndex);
     }
 
     @Override
-    public void onDropViewInstance(MapView view) {
+    public void onDropViewInstance(NavigationView view) {
         super.onDropViewInstance(view);
         view.onDestroy();
     }

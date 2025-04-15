@@ -71,4 +71,10 @@ public interface RNMapsMapViewManagerInterface<T extends View> {
   void fitToSuppliedMarkers(T view, String markersJSON, String edgePaddingJSON, boolean animated);
   void fitToCoordinates(T view, String coordinatesJSON, String edgePaddingJSON, boolean animated);
   void setIndoorActiveLevelIndex(T view, int activeLevelIndex);
+  void setShowsNavigationTripProgressBar(T view, boolean showsNavigationTripProgressBar);
+  void setShowsTrafficLights(T view, boolean showsTrafficLights);
+  void setShowsStopSigns(T view, boolean showsStopSigns);
+  void setShowsSpeedometer(T view, boolean showsSpeedometer);
+  void setShowsSpeedLimit(T view, boolean showsSpeedLimit);
+  void setNavigationVoiceMuted(T view, boolean navigationVoiceMuted);
 }

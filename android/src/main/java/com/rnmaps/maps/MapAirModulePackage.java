@@ -12,6 +12,7 @@ import com.facebook.fbreact.specs.NativeAirMapsModuleSpec;
 import com.rnmaps.fabric.CalloutManager;
 import com.rnmaps.fabric.CircleManager;
 import com.rnmaps.fabric.MapViewManager;
+import com.rnmaps.fabric.NavigationViewManager;
 import com.rnmaps.fabric.MarkerManager;
 import com.rnmaps.fabric.NativeAirMapsModule;
 import com.rnmaps.fabric.OverlayManager;
@@ -29,6 +30,7 @@ public class MapAirModulePackage extends TurboReactPackage {
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
         return List.of(new MapViewManager(reactContext),
+                new NavigationViewManager(reactContext),
                 new MarkerManager(reactContext),
                 new CalloutManager(reactContext),
                 new PolygonManager(reactContext),
@@ -62,6 +64,9 @@ public class MapAirModulePackage extends TurboReactPackage {
         }
         if (MapViewManager.REACT_CLASS.equals(name)) {
             return new MapViewManager(reactContext);
+        }
+        if (NavigationViewManager.REACT_CLASS.equals(name)) {
+            return new NavigationViewManager(reactContext);
         }
         if (UrlTileManager.REACT_CLASS.equals(name)) {
             return new UrlTileManager(reactContext);
