@@ -209,4 +209,6 @@ export type NativeCommandName =
   | 'setCamera'
   | 'setIndoorActiveLevelIndex'
   | 'setMapBoundaries'
-  | 'takeSnapshot';
+  | 'takeSnapshot'
+  | 'startNavigation'
+  | 'recenter';

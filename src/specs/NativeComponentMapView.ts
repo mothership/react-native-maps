@@ -1036,6 +1036,9 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform Android: Not supported
    */
   cameraZoomRange?: CameraZoomRange;
+
+  onNavigationRouteLoaded?: DirectEventHandler<null>;
+  onNavigationRouteFailedToLoad?: DirectEventHandler<null>;
 }
 
 export interface NativeCommands {
