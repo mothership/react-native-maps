@@ -2,6 +2,7 @@ package com.rnmaps.maps;
 
 import static androidx.core.content.PermissionChecker.checkSelfPermission;
 
+import android.util.Log;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -255,6 +256,8 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
             ((LifecycleOwner) activity).getLifecycle().addObserver(this);
         }
         super.getMapAsync(this);
+
+        Log.w("MOTHERSHIP", "MOTHERSHIP MAPVIEW CONSTRUCTOR");
 
         final MapView view = this;
 
@@ -679,7 +682,7 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
         builder.put(OnNavigationInfoUpdatedEvent.EVENT_NAME, MapBuilder.of("registrationName", OnNavigationInfoUpdatedEvent.EVENT_NAME));
         builder.put(OnNavigationRouteFailedToLoadEvent.EVENT_NAME, MapBuilder.of("registrationName", OnNavigationRouteFailedToLoadEvent.EVENT_NAME));
         builder.put(OnNavigationRouteLoadedEvent.EVENT_NAME, MapBuilder.of("registrationName", OnNavigationRouteLoadedEvent.EVENT_NAME));
-        builder.put(onShowRecenterButtonEvent.EVENT_NAME, MapBuilder.of("registrationName", OnShowRecenterButtonEvent.EVENT_NAME));
+        builder.put(OnShowRecenterButtonEvent.EVENT_NAME, MapBuilder.of("registrationName", OnShowRecenterButtonEvent.EVENT_NAME));
         builder.put(OnKmlReadyEvent.EVENT_NAME, MapBuilder.of("registrationName", OnKmlReadyEvent.EVENT_NAME));
         return builder.build();
     }

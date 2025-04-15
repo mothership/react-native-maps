@@ -30,7 +30,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.Map;
 
-public class MapManager extends ViewGroupManager<NavigationView> {
+public class NavigationManager extends ViewGroupManager<NavigationView> {
 
     private static final String REACT_CLASS = "AIRNavigationMap";
 

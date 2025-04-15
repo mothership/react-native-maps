@@ -2,6 +2,7 @@ package com.rnmaps.maps;
 
 import static androidx.core.content.PermissionChecker.checkSelfPermission;
 
+import android.util.Log;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -281,6 +282,8 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
         if (activity instanceof LifecycleOwner) {
             ((LifecycleOwner) activity).getLifecycle().addObserver(this);
         }
+
+        Log.w("MOTHERSHIP", "MOTHERSHIP NAVIGATIONVIEW CONSTRUCTOR");
 
         final NavigationView view = this;
 
@@ -722,7 +725,7 @@ public class NavigationView extends com.google.android.libraries.navigation.Navi
         builder.put(OnNavigationInfoUpdatedEvent.EVENT_NAME, MapBuilder.of("registrationName", OnNavigationInfoUpdatedEvent.EVENT_NAME));
         builder.put(OnNavigationRouteFailedToLoadEvent.EVENT_NAME, MapBuilder.of("registrationName", OnNavigationRouteFailedToLoadEvent.EVENT_NAME));
         builder.put(OnNavigationRouteLoadedEvent.EVENT_NAME, MapBuilder.of("registrationName", OnNavigationRouteLoadedEvent.EVENT_NAME));
-        builder.put(onShowRecenterButtonEvent.EVENT_NAME, MapBuilder.of("registrationName", OnShowRecenterButtonEvent.EVENT_NAME));
+        builder.put(OnShowRecenterButtonEvent.EVENT_NAME, MapBuilder.of("registrationName", OnShowRecenterButtonEvent.EVENT_NAME));
         builder.put(OnKmlReadyEvent.EVENT_NAME, MapBuilder.of("registrationName", OnKmlReadyEvent.EVENT_NAME));
         return builder.build();
     }

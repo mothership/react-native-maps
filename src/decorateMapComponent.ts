@@ -72,7 +72,7 @@ export default function decorateMapComponent<Type extends Component>(
 
   Component.prototype.getNativeComponent =
     function getNativeComponent(): NativeComponent {
-      const provider = this.context;
+      const provider = PROVIDER_GOOGLE;
       if (
         componentName === 'Marker' &&
         (Platform.OS !== 'ios' || provider !== PROVIDER_GOOGLE)
