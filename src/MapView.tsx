@@ -55,14 +55,17 @@ import {Commands, MapViewNativeComponentType} from './MapViewNativeComponent';
 
 import FabricMapView, {
   Commands as FabricCommands,
-  MapFabricNativeProps,
 } from './specs/NativeComponentMapView';
+import FabricNavigationView, {
+  Commands as FabricNavigationCommands,
+} from './specs/NativeComponentNavigationView';
 import GoogleMapView, {
   Commands as GoogleCommands,
 } from './specs/NativeComponentGoogleMapView';
 import createFabricMap, {FabricMapHandle} from './createFabricMap';
 
 const FabricMap = createFabricMap(FabricMapView, FabricCommands);
+const FabricNavigationMap = createFabricMap(FabricNavigationView, FabricNavigationCommands);
 var FabricGoogleMap: any = null;
 if (Platform.OS === 'ios') {
   FabricGoogleMap = createFabricMap(GoogleMapView, GoogleCommands);
@@ -1355,9 +1358,15 @@ class MapView extends React.Component<MapViewProps, State> {
     } else {
       return (
         <ProviderContext.Provider value={'google'}>
-          <FabricMap {...props} ref={this.fabricMap}>
-            {childrenNodes}
-          </FabricMap>
+          {this.props.navigationModeEnabled ? (
+            <FabricNavigationMap {...props} ref={this.fabricMap}>
+              {childrenNodes}
+            </FabricNavigationMap>
+          ) : (
+            <FabricMap {...props} ref={this.fabricMap}>
+              {childrenNodes}
+            </FabricMap>
+          )}
         </ProviderContext.Provider>
       );
     }

@@ -251,6 +251,21 @@ export type MarkerPressEventHandler = DirectEventHandler<
   }>
 >;
 
+export type NavigationInfoUpdatedEventHandler = DirectEventHandler<
+  Readonly<{
+    action?: string;
+    distanceRemaining: Double;
+    durationRemaining: Double;
+  }>
+>;
+
+export type ShowRecenterButtonEventHandler = DirectEventHandler<
+  Readonly<{
+    action?: string;
+    showRecenterButton: boolean;
+  }>
+>;
+
 export type PanDragEventHandler = DirectEventHandler<
   Readonly<{
     coordinate: {
@@ -1037,8 +1052,108 @@ export interface MapFabricNativeProps extends ViewProps {
    */
   cameraZoomRange?: CameraZoomRange;
 
+  /**
+   * If `true`, the map will be displayed in Navigation mode (in case Terms and conditions have been accepted).
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  navigationModeEnabled?: boolean;
+
+  /**
+   * If `true`, while navigating, the map will show a progress bar representing the trip distance and traffic along the route.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  showsNavigationTripProgressBar?: boolean;
+
+  /**
+   * If `true`, traffic lights will be displayed on the map.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  showsTrafficLights?: boolean;
+
+  /**
+   * If `true`, stop signs will be displayed on the map.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  showsStopSigns?: boolean;
+
+  /**
+   * If `true`, speedometer will be displayed on the map (only while the Recenter button is not shown).
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  showsSpeedometer?: boolean;
+
+  /**
+   * If `true`, speed limit will be displayed on the map (only while the Recenter button is not shown).
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  showsSpeedLimit?: boolean;
+
+  /**
+   * If `true`, while map is in navigation mode, you will hear NO voice guidande.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  navigationVoiceMuted?: boolean;
+
+  /**
+   * Callback that is called when the Recenter button changes its visibility.
+   *
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  onShowRecenterButton?: ShowRecenterButtonEventHandler;
+
+  /**
+   * Callback that is called when the navigation route to the destination has been loaded.
+   *
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
   onNavigationRouteLoaded?: DirectEventHandler<null>;
+
+  /**
+   * Callback that is called when the navigation route to the destination has failed to load.
+   *
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
   onNavigationRouteFailedToLoad?: DirectEventHandler<null>;
+
+  /**
+   * Callback that is called when the navigation ETA changes.
+   *
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  onNavigationInfoUpdated?: NavigationInfoUpdatedEventHandler;
+
+  /**
+   * Callback that is called when the user arrives to their destination using navigation.
+   *
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  onArrivedToDestination?: DirectEventHandler<null>;
 }
 
 export interface NativeCommands {
@@ -1079,9 +1194,14 @@ export interface NativeCommands {
     animated: boolean,
   ) => void;
 
-  setIndoorActiveLevelIndex: (
+  startNavigation: (
     viewRef: React.ElementRef<React.ComponentType>,
-    activeLevelIndex: Int32,
+    coordinate: LatLng,
+    placeId?: string,
+  ) => void;
+
+  recenter: (
+    viewRef: React.ElementRef<React.ComponentType>,
   ) => void;
 }
 
@@ -1094,6 +1214,8 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
     'fitToSuppliedMarkers',
     'fitToCoordinates',
     'setIndoorActiveLevelIndex',
+    'startNavigation',
+    'recenter',
   ],
 });
 

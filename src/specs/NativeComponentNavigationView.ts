@@ -10,7 +10,6 @@ import {
   DirectEventHandler,
   BubblingEventHandler,
 } from 'react-native/Libraries/Types/CodegenTypes';
-import { NavigationInfoUpdatedEventHandler, ShowRecenterButtonEventHandler } from "./NativeComponentMapView";
 
 export type EdgePadding = Readonly<{
   top: Double; // Non-nullable Double for top
@@ -34,7 +33,7 @@ export type Frame = Readonly<{
   height: Double;
 }>;
 
-export type ClickEvent = BubblingEventHandler<
+export type ClickEvent = DirectEventHandler<
   Readonly<{
     coordinate: {
       latitude: Double; // Inlined LatLng
@@ -75,7 +74,7 @@ export type LongPressEventHandler = BubblingEventHandler<
   }>
 >;
 
-export type MarkerDeselectEventHandler = BubblingEventHandler<
+export type MarkerDeselectEventHandler = DirectEventHandler<
   Readonly<{
     action?: string;
     id: string;
@@ -86,7 +85,7 @@ export type MarkerDeselectEventHandler = BubblingEventHandler<
   }>
 >;
 
-export type MarkerSelectEventHandler = BubblingEventHandler<
+export type MarkerSelectEventHandler = DirectEventHandler<
   Readonly<{
     action?: string;
     id: string;
@@ -97,7 +96,7 @@ export type MarkerSelectEventHandler = BubblingEventHandler<
   }>
 >;
 
-export type CalloutPressEvent = BubblingEventHandler<{
+export type CalloutPressEvent = DirectEventHandler<{
   action?: string;
 
   /**
@@ -169,9 +168,9 @@ export type Point = Readonly<{
 
 export type Region = Readonly<
   LatLng & {
-    latitudeDelta: Double; // Non-nullable Double for latitudeDelta
-    longitudeDelta: Double; // Non-nullable Double for longitudeDelta
-  }
+  latitudeDelta: Double; // Non-nullable Double for latitudeDelta
+  longitudeDelta: Double; // Non-nullable Double for longitudeDelta
+}
 >;
 
 export type IndoorLevel = Readonly<{
@@ -182,9 +181,73 @@ export type IndoorLevel = Readonly<{
 
 export type IndoorLevelActivatedEventHandler = DirectEventHandler<
   Readonly<{
-    activeLevelIndex: Int32; // Int32 for integers
-    name: string; // Non-nullable string
-    shortName: string; // Non-nullable string
+    IndoorLevel: {
+      activeLevelIndex: Int32; // Int32 for integers
+      name: string; // Non-nullable string
+      shortName: string; // Non-nullable string
+    }; // Nested ActiveIndoorLevel type
+  }>
+>;
+
+export type IndoorBuilding = Readonly<{
+  underground: boolean; // Non-nullable boolean
+  activeLevelIndex: Int32; // Int32 for integers
+  levels: ReadonlyArray<IndoorLevel>; // Immutable array of IndoorLevel
+}>;
+
+export type IndoorBuildingEventHandler = DirectEventHandler<
+  Readonly<{
+    IndoorBuilding: {
+      underground: boolean; // Non-nullable boolean
+      activeLevelIndex: Int32; // Int32 for integers
+    };
+  }>
+>;
+
+export type Details = Readonly<{
+  isGesture?: boolean; // Optional boolean for gesture detail
+}>;
+
+export type MarkerDragEventHandler = DirectEventHandler<
+  Readonly<{
+    coordinate: {
+      latitude: Double; // Inlined LatLng
+      longitude: Double;
+    };
+    position: {
+      x: Double; // Inlined Point
+      y: Double;
+    };
+    id?: string; // Optional id for iOS
+  }>
+>;
+
+export type MarkerDragStartEndEventHandler = DirectEventHandler<
+  Readonly<{
+    coordinate: {
+      latitude: Double; // Inlined LatLng
+      longitude: Double;
+    };
+    id?: string; // Optional id for iOS
+    position?: {
+      x: Double; // Inlined Point
+      y: Double;
+    }; // Optional position for Android
+  }>
+>;
+
+export type MarkerPressEventHandler = DirectEventHandler<
+  Readonly<{
+    action?: string;
+    id: string;
+    coordinate: {
+      latitude: Double; // Inlined LatLng
+      longitude: Double;
+    };
+    position?: {
+      x: Double; // Inlined Point
+      y: Double;
+    }; // Optional position for Android
   }>
 >;
 
@@ -203,74 +266,7 @@ export type ShowRecenterButtonEventHandler = DirectEventHandler<
   }>
 >;
 
-export type IndoorBuilding = Readonly<{
-  underground: boolean; // Non-nullable boolean
-  activeLevelIndex: Int32; // Int32 for integers
-  levels: ReadonlyArray<IndoorLevel>; // Immutable array of IndoorLevel
-}>;
-
-export type IndoorBuildingEventHandler = DirectEventHandler<
-  Readonly<{
-    underground: boolean; // Non-nullable boolean
-    activeLevelIndex: Int32; // Int32 for integers
-    levels: string; // Immutable array of IndoorLevel
-  }>
->;
-
-export type KmlMapEventHandler = DirectEventHandler<Readonly<{}>>;
-
-export type MapLoadedEventHandler = DirectEventHandler<Readonly<{}>>;
-
-export type MapReadyEventHandler = DirectEventHandler<Readonly<{}>>;
-
-export type Details = Readonly<{
-  isGesture?: boolean; // Optional boolean for gesture detail
-}>;
-
-export type MarkerDragEventHandler = BubblingEventHandler<
-  Readonly<{
-    coordinate: {
-      latitude: Double; // Inlined LatLng
-      longitude: Double;
-    };
-    position: {
-      x: Double; // Inlined Point
-      y: Double;
-    };
-    id?: string; // Optional id for iOS
-  }>
->;
-
-export type MarkerDragStartEndEventHandler = BubblingEventHandler<
-  Readonly<{
-    coordinate: {
-      latitude: Double; // Inlined LatLng
-      longitude: Double;
-    };
-    id?: string; // Optional id for iOS
-    position?: {
-      x: Double; // Inlined Point
-      y: Double;
-    }; // Optional position for Android
-  }>
->;
-
-export type MarkerPressEventHandler = BubblingEventHandler<
-  Readonly<{
-    action?: string;
-    id: string;
-    coordinate: {
-      latitude: Double; // Inlined LatLng
-      longitude: Double;
-    };
-    position?: {
-      x: Double; // Inlined Point
-      y: Double;
-    }; // Optional position for Android
-  }>
->;
-
-export type PanDragEventHandler = BubblingEventHandler<
+export type PanDragEventHandler = DirectEventHandler<
   Readonly<{
     coordinate: {
       latitude: Double; // Inlined LatLng
@@ -283,7 +279,7 @@ export type PanDragEventHandler = BubblingEventHandler<
   }>
 >;
 
-export type PoiClickEventHandler = BubblingEventHandler<
+export type PoiClickEventHandler = DirectEventHandler<
   Readonly<{
     placeId: string;
     name: string;
@@ -311,9 +307,6 @@ export type MapPressEventHandler = BubblingEventHandler<
     action?: string;
   }>
 >;
-
-export type RegionChangeStartEventHandler = DirectEventHandler<Details>;
-
 export type RegionChangeEvent = Readonly<{
   region: {
     latitude: Double; // Non-nullable Double for latitude
@@ -323,9 +316,6 @@ export type RegionChangeEvent = Readonly<{
   }; // The region object
   continuous?: boolean;
 }>;
-
-export type RegionChangeEventHandler = BubblingEventHandler<RegionChangeEvent>;
-
 export type UserLocationChangeEvent = Readonly<{
   coordinate?: {
     latitude: Double; // Non-nullable Double for latitude
@@ -366,6 +356,15 @@ export type CameraZoomRange = Readonly<{
 
 export interface MapFabricNativeProps extends ViewProps {
   /**
+   * If `true` map will be cached and displayed as an image instead of being interactable, for performance usage.
+   *
+   * @default false
+   * @platform iOS: Apple Maps only
+   * @platform Android: Supported
+   */
+  cacheEnabled?: boolean;
+
+  /**
    * The camera view the map should display.
    *
    * Use the camera system, instead of the region system, if you need control over
@@ -373,7 +372,51 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform iOS: Supported
    * @platform Android: Supported
    */
-  camera?: Camera;
+  camera?: Readonly<{
+    /**
+     * Apple Maps
+     */
+    altitude?: Double; // Nullable Double for altitude
+    center: {
+      latitude: Double; // Inlined LatLng
+      longitude: Double;
+    }; // Non-nullable center
+    heading: Double; // Non-nullable Double for heading
+    pitch: Double; // Non-nullable Double for pitch
+
+    /**
+     * Google Maps
+     */
+    zoom?: Float; // Nullable Double for zoom
+  }>;
+
+  /**
+   * If set, changes the position of the compass.
+   *
+   * @platform iOS: Apple Maps only
+   * @platform Android: Not supported
+   */
+  compassOffset?: Point;
+
+  /**
+   * If `true` the map will focus on the user's location.
+   * This only works if `showsUserLocation` is true and the user has shared their location.
+   *
+   * @default false
+   * @platform iOS: Apple Maps only
+   * @platform Android: Not supported
+   */
+  followsUserLocation?: boolean;
+
+  /**
+   * If `false` the map will not capture PoI clicks
+   * This can improve click handling on the map for android
+   *
+   * @default true
+   * @platform iOS: Not supported
+   * @platform Android: supported
+   */
+  poiClickEnabled?: boolean;
 
   /**
    * The initial camera view the map should use.  Use this prop instead of `camera`
@@ -389,7 +432,23 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform iOS: Supported
    * @platform Android: Supported
    */
-  initialCamera?: Camera;
+  initialCamera?: Readonly<{
+    /**
+     * Apple Maps
+     */
+    altitude?: Double; // Nullable Double for altitude
+    center: {
+      latitude: Double; // Inlined LatLng
+      longitude: Double;
+    }; // Non-nullable center
+    heading: Double; // Non-nullable Double for heading
+    pitch: Double; // Non-nullable Double for pitch
+
+    /**
+     * Google Maps
+     */
+    zoom?: Float; // Nullable Double for zoom
+  }>;
 
   /**
    * The initial region to be displayed by the map.  Use this prop instead of `region`
@@ -413,10 +472,35 @@ export interface MapFabricNativeProps extends ViewProps {
   kmlSrc?: string;
 
   /**
+   * If set, changes the position of the "Legal" label link in Apple Maps.
+   *
+   * @platform iOS: Apple Maps only
+   * @platform Android: Not supported
+   */
+  legalLabelInsets?: EdgePadding;
+
+  /**
+   * Enables lite mode on Android
+   *
+   * @platform iOS: Not supported
+   * @platform Android: Supported
+   */
+  liteMode?: boolean;
+
+  /**
    * https://developers.google.com/maps/documentation/get-map-id
    * google cloud mapId to enable cloud styling and more
    */
   googleMapId?: string;
+
+  /**
+   * https://developers.google.com/maps/documentation/android-sdk/renderer
+   * google maps renderer
+   * @default `LATEST`
+   * @platform iOS: Not supported
+   * @platform Android: Supported
+   */
+  googleRenderer?: WithDefault<'LATEST' | 'LEGACY', 'LATEST'>;
 
   /**
    * Sets loading background color.
@@ -426,6 +510,24 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform Android: Supported
    */
   loadingBackgroundColor?: ColorValue;
+
+  /**
+   * If `true` a loading indicator will show while the map is loading.
+   *
+   * @default false
+   * @platform iOS: Apple Maps only
+   * @platform Android: Supported
+   */
+  loadingEnabled?: boolean;
+
+  /**
+   * Sets loading indicator color.
+   *
+   * @default `#606060`
+   * @platform iOS: Apple Maps only
+   * @platform Android: Supported
+   */
+  loadingIndicatorColor?: ColorValue;
 
   /**
    * Adds custom padding to each side of the map. Useful when map elements/markers are obscured.
@@ -455,6 +557,14 @@ export interface MapFabricNativeProps extends ViewProps {
   >;
 
   /**
+   * TODO: Add documentation
+   *
+   * @platform iOS: Apple Maps only
+   * @platform Android: Not supported
+   */
+  maxDelta?: Double;
+
+  /**
    * Maximum zoom value for the map, must be between 0 and 20
    *
    * @default 20
@@ -465,6 +575,14 @@ export interface MapFabricNativeProps extends ViewProps {
   maxZoom?: Float;
 
   /**
+   * TODO: Add documentation
+   *
+   * @platform iOS: Apple Maps only
+   * @platform Android: Not supported
+   */
+  minDelta?: Double;
+
+  /**
    * Minimum zoom value for the map, must be between 0 and 20
    *
    * @default 0
@@ -473,6 +591,31 @@ export interface MapFabricNativeProps extends ViewProps {
    * @deprecated on Apple Maps, use `cameraZoomRange` instead
    */
   minZoom?: Float;
+
+  /**
+   * If `false` the map won't move to the marker when pressed.
+   *
+   * @default true
+   * @platform iOS: Not supported
+   * @platform Android: Supported
+   */
+  moveOnMarkerPress?: WithDefault<boolean, true>;
+
+  /**
+   * Callback that is called when a callout is tapped by the user.
+   *
+   * @platform iOS: Apple Maps only
+   * @platform Android: Supported
+   */
+  onCalloutPress?: CalloutPressEventHandler;
+
+  /**
+   * Callback that is called when user double taps on the map.
+   *
+   * @platform iOS: Apple Maps only
+   * @platform Android: Supported
+   */
+  onDoublePress?: ClickEvent;
 
   /**
    * Callback that is called when an indoor building is focused/unfocused
@@ -496,7 +639,7 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform iOS: Google Maps only
    * @platform Android: Supported
    */
-  onKmlReady?: KmlMapEventHandler;
+  onKmlReady?: DirectEventHandler<null>;
 
   /**
    * Callback that is called when user makes a "long press" somewhere on the map.
@@ -512,7 +655,7 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform iOS: Google Maps only
    * @platform Android: Supported
    */
-  onMapLoaded?: MapLoadedEventHandler;
+  onMapLoaded?: DirectEventHandler<null>;
 
   /**
    * Callback that is called once the map is ready.
@@ -523,7 +666,7 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform iOS: Supported
    * @platform Android: Supported
    */
-  onMapReady?: MapReadyEventHandler;
+  onMapReady?: DirectEventHandler<null>;
 
   /**
    * Callback that is called when a marker on the map becomes deselected.
@@ -585,6 +728,12 @@ export interface MapFabricNativeProps extends ViewProps {
    */
   onPanDrag?: PanDragEventHandler;
 
+  /*
+    internal flag to enable pan gesture handling on iOS manually
+    * see MapView.ts line 1228
+     */
+  handlePanDrag?: boolean;
+
   /**
    * Callback that is called when user click on a POI.
    *
@@ -609,7 +758,7 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform iOS: Supported
    * @platform Android: Supported
    */
-  onRegionChangeStart?: RegionChangeEventHandler;
+  onRegionChangeStart?: DirectEventHandler<RegionChangeEvent>;
 
   /**
    * Callback that is called continuously when the region changes, such as when a user is dragging the map.
@@ -619,7 +768,7 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform iOS: Supported
    * @platform Android: Supported
    */
-  onRegionChange?: RegionChangeEventHandler;
+  onRegionChange?: DirectEventHandler<RegionChangeEvent>;
 
   /**
    * Callback that is called once when the region changes, such as when the user is done moving the map.
@@ -629,7 +778,7 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform iOS: Supported
    * @platform Android: Supported
    */
-  onRegionChangeComplete?: RegionChangeEventHandler;
+  onRegionChangeComplete?: DirectEventHandler<RegionChangeEvent>;
 
   /**
    * Callback that is called when the underlying map figures our users current location
@@ -743,32 +892,13 @@ export interface MapFabricNativeProps extends ViewProps {
   showsMyLocationButton?: WithDefault<boolean, true>;
 
   /**
-   * If `false` points of interest won't be displayed on the map.
-   * TODO: DEPRECATED? Doesn't seem to do anything
-   *
-   * @default true
-   * @platform iOS: Maybe Apple Maps?
-   * @platform Android: Not supported
-   */
-  showsPointsOfInterest?: boolean;
-
-  /**
    * A Boolean indicating whether the map shows scale information.
    *
-   * @default true
+   * @default false
    * @platform iOS: Apple Maps only
    * @platform Android: Not supported
    */
   showsScale?: boolean;
-
-  /**
-   * A Boolean value indicating whether the map displays traffic information.
-   *
-   * @default false
-   * @platform iOS: Supported
-   * @platform Android: Not supported?
-   */
-  showsTraffic?: boolean;
 
   /**
    * If `true` the users location will be displayed on the map.
@@ -780,6 +910,24 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform Android: Supported
    */
   showsUserLocation?: boolean;
+
+  /**
+   * Sets the tint color of the map. (Changes the color of the position indicator)
+   *
+   * @default System Blue
+   * @platform iOS: Apple Maps only
+   * @platform Android: Not supported
+   */
+  tintColor?: ColorValue;
+
+  /**
+   * If `false` will hide 'Navigate' and 'Open in Maps' buttons on marker press
+   *
+   * @default true
+   * @platform iOS: Not supported
+   * @platform Android: Supported
+   */
+  toolbarEnabled?: WithDefault<boolean, true>;
 
   /**
    * Sets the map to the style selected.
@@ -800,6 +948,17 @@ export interface MapFabricNativeProps extends ViewProps {
   customMapStyleString?: string;
 
   /**
+   * The title of the annotation for current user location.
+   *
+   * This only works if `showsUserLocation` is true.
+   *
+   * @default `My Location`
+   * @platform iOS: Apple Maps only
+   * @platform Android: Not supported
+   */
+  userLocationAnnotationTitle?: string;
+
+  /**
    * If `true` clicking user location will show the default callout for userLocation annotation.
    *
    * @default false
@@ -817,7 +976,7 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform iOS: Not supported
    * @platform Android: Supported
    */
-  userLocationFastestInterval?: Int32;
+  userLocationFastestInterval?: WithDefault<Int32, 5000>;
 
   /**
    * Set power priority of user location tracking.
@@ -842,7 +1001,7 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform iOS: Not supported
    * @platform Android: Supported
    */
-  userLocationUpdateInterval?: Int32;
+  userLocationUpdateInterval?: WithDefault<Int32, 5000>;
 
   /**
    * If `false` the zoom control at the bottom right of the map won't be visible.
@@ -851,7 +1010,7 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform iOS: Not supported
    * @platform Android: Supported
    */
-  zoomControlEnabled?: boolean;
+  zoomControlEnabled?: WithDefault<boolean, true>;
 
   /**
    * If `false` the user won't be able to pinch/zoom the map.
@@ -865,6 +1024,15 @@ export interface MapFabricNativeProps extends ViewProps {
   zoomEnabled?: WithDefault<boolean, true>;
 
   /**
+   * A Boolean value indicating whether the map displays traffic information.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   * @platform Android: Supported
+   */
+  showsTraffic?: boolean;
+
+  /**
    * If `false` the user won't be able to double tap to zoom the map.
    * **Note:** But it will greatly decrease delay of tap gesture recognition.
    *
@@ -873,6 +1041,16 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform Android: Not supported
    */
   zoomTapEnabled?: WithDefault<boolean, true>;
+
+  /**
+   * Map camera distance limits. `minCenterCoordinateDistance` for minimum distance, `maxCenterCoordinateDistance` for maximum.
+   * `animated` for animated zoom changes.
+   * Takes precedence if conflicting with `minZoomLevel`, `maxZoomLevel`.
+   *
+   * @platform iOS: 13.0+
+   * @platform Android: Not supported
+   */
+  cameraZoomRange?: CameraZoomRange;
 
   /**
    * If `true`, the map will be displayed in Navigation mode (in case Terms and conditions have been accepted).
@@ -1015,16 +1193,16 @@ export interface NativeCommands {
     edgePaddingJSON: string,
     animated: boolean,
   ) => void;
-  setIndoorActiveLevelIndex: (
-    viewRef: React.ElementRef<React.ComponentType>,
-    activeLevelIndex: Int32,
-  ) => void;
+
   startNavigation: (
     viewRef: React.ElementRef<React.ComponentType>,
     coordinate: LatLng,
     placeId?: string,
   ) => void;
-  recenter: (viewRef: React.ElementRef<React.ComponentType>) => void;
+
+  recenter: (
+    viewRef: React.ElementRef<React.ComponentType>,
+  ) => void;
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
@@ -1042,8 +1220,6 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
 });
 
 export default codegenNativeComponent<MapFabricNativeProps>(
-  'RNMapsGoogleMapView',
-  {
-    excludedPlatforms: ['android'],
-  },
+  'RNMapsNavigationView',
+  {},
 ) as HostComponent<MapFabricNativeProps>;

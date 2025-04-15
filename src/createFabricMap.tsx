@@ -38,6 +38,8 @@ export interface FabricMapHandle {
   getPointForCoordinate: (coordinate: LatLng) => Promise<Point>;
   getCoordinateForPoint: (point: Point) => Promise<LatLng>;
   setIndoorActiveLevelIndex: (activeLevelIndex: number) => void;
+  startNavigation: (coordinate: LatLng, placeId?: string) => void;
+  recenter: () => void;
 }
 
 const createFabricMap = (ViewComponent: React.ComponentType, Commands: any) => {
@@ -241,6 +243,32 @@ const createFabricMap = (ViewComponent: React.ComponentType, Commands: any) => {
           }
         } else {
           console.warn('setCamera is not supported');
+        }
+      },
+      startNavigation(coordinate: LatLng, placeId?: string) {
+        if (fabricRef.current) {
+          try {
+            Commands.startNavigation(
+              fabricRef.current,
+              JSON.stringify(coordinate),
+              placeId,
+            );
+          } catch (error) {
+            console.error('Failed to startNavigation:', error);
+          }
+        } else {
+          console.warn('startNavigation is not supported');
+        }
+      },
+      recenter() {
+        if (fabricRef.current) {
+          try {
+            Commands.recenter(fabricRef.current);
+          } catch (error) {
+            console.error('Failed to recenter:', error);
+          }
+        } else {
+          console.warn('recenter is not supported');
         }
       },
     }));
