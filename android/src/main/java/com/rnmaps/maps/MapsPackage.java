@@ -22,12 +22,15 @@ public class MapsPackage implements ReactPackage {
   @Override
   public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
     MapManager mapManager = new MapManager(reactContext);
+    NavigationManager navigationManager = new NavigationManager(reactContext);
     MapMarkerManager annotationManager = new MapMarkerManager();
     mapManager.setMarkerManager(annotationManager);
+    navigationManager.setMarkerManager(annotationManager);
 
     List<ViewManager> viewManagers = new ArrayList<>();
 
     viewManagers.add(mapManager);
+    viewManagers.add(navigationManager);
     viewManagers.add(annotationManager);
     viewManagers.add(new MapCalloutManager());
     viewManagers.add(new MapPolylineManager(reactContext));

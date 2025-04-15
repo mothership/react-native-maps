@@ -30,9 +30,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.Map;
 
-public class MapManager extends ViewGroupManager<MapView> {
+public class MapManager extends ViewGroupManager<NavigationView> {
 
-    private static final String REACT_CLASS = "AIRMap";
+    private static final String REACT_CLASS = "AIRNavigationMap";
 
     private final Map<String, Integer> MAP_TYPES = MapBuilder.of(
             "standard", GoogleMap.MAP_TYPE_NORMAL,
@@ -56,7 +56,7 @@ public class MapManager extends ViewGroupManager<MapView> {
 
     protected MapsInitializer.Renderer renderer;
 
-    public MapManager(ReactApplicationContext context) {
+    public NavigationManager(ReactApplicationContext context) {
         this.appContext = context;
     }
 
@@ -74,12 +74,12 @@ public class MapManager extends ViewGroupManager<MapView> {
     }
 
     @Override
-    protected MapView createViewInstance(@NonNull ThemedReactContext context) {
-        return new MapView(context, this.appContext, this, googleMapOptions);
+    protected NavigationView createViewInstance(@NonNull ThemedReactContext context) {
+        return new NavigationView(context, this.appContext, this, googleMapOptions);
     }
 
     @Override
-    protected MapView createViewInstance(int reactTag, @NonNull ThemedReactContext reactContext, @Nullable ReactStylesDiffMap initialProps, @Nullable StateWrapper stateWrapper) {
+    protected NavigationView createViewInstance(int reactTag, @NonNull ThemedReactContext reactContext, @Nullable ReactStylesDiffMap initialProps, @Nullable StateWrapper stateWrapper) {
         this.googleMapOptions = new GoogleMapOptions();
         if (initialProps != null) {
             if (initialProps.getString("googleMapId") != null) {
@@ -89,12 +89,12 @@ public class MapManager extends ViewGroupManager<MapView> {
                 googleMapOptions.liteMode(initialProps.getBoolean("liteMode", false));
             }
             if (initialProps.hasKey("initialCamera")) {
-                CameraPosition position = MapView.cameraPositionFromMap(initialProps.getMap("initialCamera"));
+                CameraPosition position = NavigationView.cameraPositionFromMap(initialProps.getMap("initialCamera"));
                 if (position != null) {
                     googleMapOptions.camera(position);
                 }
             } else if (initialProps.hasKey("camera")) {
-                CameraPosition position = MapView.cameraPositionFromMap(initialProps.getMap("camera"));
+                CameraPosition position = NavigationView.cameraPositionFromMap(initialProps.getMap("camera"));
                 if (position != null) {
                     googleMapOptions.camera(position);
                 }
@@ -119,44 +119,44 @@ public class MapManager extends ViewGroupManager<MapView> {
     }
 
     @ReactProp(name = "region")
-    public void setRegion(MapView view, ReadableMap region) {
+    public void setRegion(NavigationView view, ReadableMap region) {
         view.setRegion(region);
     }
 
     @ReactProp(name = "googleRenderer")
-    public void setGoogleRenderer(MapView view, @Nullable String googleRenderer) {
+    public void setGoogleRenderer(NavigationView view, @Nullable String googleRenderer) {
         // do nothing, passed as part of the InitialProps
     }
 
     @ReactProp(name = "liteMode", defaultBoolean = false)
-    public void setLiteMode(MapView view, boolean liteMode) {
+    public void setLiteMode(NavigationView view, boolean liteMode) {
         googleMapOptions.liteMode(liteMode);
     }
 
     @ReactProp(name = "googleMapId")
-    public void setGoogleMapId(MapView view, @Nullable String googleMapId) {
+    public void setGoogleMapId(NavigationView view, @Nullable String googleMapId) {
         if (googleMapId != null) {
             googleMapOptions.mapId(googleMapId);
         }
     }
 
     @ReactProp(name = "initialRegion")
-    public void setInitialRegion(MapView view, ReadableMap initialRegion) {
+    public void setInitialRegion(NavigationView view, ReadableMap initialRegion) {
         view.setInitialRegion(initialRegion);
     }
 
     @ReactProp(name = "camera")
-    public void setCamera(MapView view, ReadableMap camera) {
+    public void setCamera(NavigationView view, ReadableMap camera) {
         view.setCamera(camera);
     }
 
     @ReactProp(name = "initialCamera")
-    public void setInitialCamera(MapView view, ReadableMap initialCamera) {
+    public void setInitialCamera(NavigationView view, ReadableMap initialCamera) {
         view.setInitialCamera(initialCamera);
     }
 
     @ReactProp(name = "mapType")
-    public void setMapType(MapView view, @Nullable String mapType) {
+    public void setMapType(NavigationView view, @Nullable String mapType) {
         int typeId = MAP_TYPES.get(mapType);
         if (view.map != null) {
             view.map.setMapType(typeId);
@@ -164,12 +164,12 @@ public class MapManager extends ViewGroupManager<MapView> {
     }
 
     @ReactProp(name = "customMapStyleString")
-    public void setMapStyle(MapView view, @Nullable String customMapStyleString) {
+    public void setMapStyle(NavigationView view, @Nullable String customMapStyleString) {
         view.setMapStyle(customMapStyleString);
     }
 
     @ReactProp(name = "mapPadding")
-    public void setMapPadding(MapView view, @Nullable ReadableMap padding) {
+    public void setMapPadding(NavigationView view, @Nullable ReadableMap padding) {
         int left = 0;
         int top = 0;
         int right = 0;
@@ -201,184 +201,184 @@ public class MapManager extends ViewGroupManager<MapView> {
     }
 
     @ReactProp(name = "showsUserLocation", defaultBoolean = false)
-    public void setShowsUserLocation(MapView view, boolean showUserLocation) {
+    public void setShowsUserLocation(NavigationView view, boolean showUserLocation) {
         view.setShowsUserLocation(showUserLocation);
     }
 
     @ReactProp(name = "userLocationPriority")
-    public void setUserLocationPriority(MapView view, @Nullable String accuracy) {
+    public void setUserLocationPriority(NavigationView view, @Nullable String accuracy) {
         view.setUserLocationPriority(MY_LOCATION_PRIORITY.get(accuracy));
     }
 
     @ReactProp(name = "userLocationUpdateInterval", defaultInt = 5000)
-    public void setUserLocationUpdateInterval(MapView view, int updateInterval) {
+    public void setUserLocationUpdateInterval(NavigationView view, int updateInterval) {
         view.setUserLocationUpdateInterval(updateInterval);
     }
 
     @ReactProp(name = "userLocationFastestInterval", defaultInt = 5000)
-    public void setUserLocationFastestInterval(MapView view, int fastestInterval) {
+    public void setUserLocationFastestInterval(NavigationView view, int fastestInterval) {
         view.setUserLocationFastestInterval(fastestInterval);
     }
 
     @ReactProp(name = "showsMyLocationButton", defaultBoolean = true)
-    public void setShowsMyLocationButton(MapView view, boolean showMyLocationButton) {
+    public void setShowsMyLocationButton(NavigationView view, boolean showMyLocationButton) {
         view.setShowsMyLocationButton(showMyLocationButton);
     }
 
     @ReactProp(name = "toolbarEnabled", defaultBoolean = true)
-    public void setToolbarEnabled(MapView view, boolean toolbarEnabled) {
+    public void setToolbarEnabled(NavigationView view, boolean toolbarEnabled) {
         view.setToolbarEnabled(toolbarEnabled);
     }
 
     // This is a private prop to improve performance of panDrag by disabling it when the callback
     // is not set
     @ReactProp(name = "handlePanDrag", defaultBoolean = false)
-    public void setHandlePanDrag(MapView view, boolean handlePanDrag) {
+    public void setHandlePanDrag(NavigationView view, boolean handlePanDrag) {
         view.setHandlePanDrag(handlePanDrag);
     }
 
     @ReactProp(name = "showsTraffic", defaultBoolean = false)
-    public void setShowTraffic(MapView view, boolean showTraffic) {
+    public void setShowTraffic(NavigationView view, boolean showTraffic) {
         if (view.map != null) {
             view.map.setTrafficEnabled(showTraffic);
         }
     }
 
     @ReactProp(name = "showsBuildings", defaultBoolean = false)
-    public void setShowBuildings(MapView view, boolean showBuildings) {
+    public void setShowBuildings(NavigationView view, boolean showBuildings) {
         view.setShowBuildings(showBuildings);
     }
 
     @ReactProp(name = "showsIndoors", defaultBoolean = false)
-    public void setShowIndoors(MapView view, boolean showIndoors) {
+    public void setShowIndoors(NavigationView view, boolean showIndoors) {
         view.setShowIndoors(showIndoors);
     }
 
     @ReactProp(name = "showsIndoorLevelPicker", defaultBoolean = false)
-    public void setShowsIndoorLevelPicker(MapView view, boolean showsIndoorLevelPicker) {
+    public void setShowsIndoorLevelPicker(NavigationView view, boolean showsIndoorLevelPicker) {
         view.setShowsIndoorLevelPicker(showsIndoorLevelPicker);
     }
 
     @ReactProp(name = "showsCompass", defaultBoolean = false)
-    public void setShowsCompass(MapView view, boolean showsCompass) {
+    public void setShowsCompass(NavigationView view, boolean showsCompass) {
         view.setShowsCompass(showsCompass);
     }
 
     @ReactProp(name = "scrollEnabled", defaultBoolean = false)
-    public void setScrollEnabled(MapView view, boolean scrollEnabled) {
+    public void setScrollEnabled(NavigationView view, boolean scrollEnabled) {
         view.setScrollEnabled(scrollEnabled);
     }
 
     @ReactProp(name = "zoomEnabled", defaultBoolean = false)
-    public void setZoomEnabled(MapView view, boolean zoomEnabled) {
+    public void setZoomEnabled(NavigationView view, boolean zoomEnabled) {
         view.setZoomEnabled(zoomEnabled);
     }
 
     @ReactProp(name = "zoomControlEnabled", defaultBoolean = true)
-    public void setZoomControlEnabled(MapView view, boolean zoomControlEnabled) {
+    public void setZoomControlEnabled(NavigationView view, boolean zoomControlEnabled) {
         view.setZoomControlEnabled(zoomControlEnabled);
     }
 
     @ReactProp(name = "rotateEnabled", defaultBoolean = false)
-    public void setRotateEnabled(MapView view, boolean rotateEnabled) {
+    public void setRotateEnabled(NavigationView view, boolean rotateEnabled) {
         view.setRotateEnabled(rotateEnabled);
     }
 
     @ReactProp(name = "scrollDuringRotateOrZoomEnabled", defaultBoolean = true)
-    public void setScrollDuringRotateOrZoomEnabled(MapView view, boolean scrollDuringRotateOrZoomEnabled) {
+    public void setScrollDuringRotateOrZoomEnabled(NavigationView view, boolean scrollDuringRotateOrZoomEnabled) {
         view.setScrollDuringRotateOrZoomEnabled(scrollDuringRotateOrZoomEnabled);
     }
 
     @ReactProp(name = "cacheEnabled", defaultBoolean = false)
-    public void setCacheEnabled(MapView view, boolean cacheEnabled) {
+    public void setCacheEnabled(NavigationView view, boolean cacheEnabled) {
         view.setCacheEnabled(cacheEnabled);
     }
 
       @ReactProp(name = "poiClickEnabled", defaultBoolean = true)
-        public void setPoiClickEnabled(MapView view, boolean poiClickEnabled) {
+        public void setPoiClickEnabled(NavigationView view, boolean poiClickEnabled) {
             view.setPoiClickEnabled(poiClickEnabled);
         }
 
     @ReactProp(name = "loadingEnabled", defaultBoolean = false)
-    public void setLoadingEnabled(MapView view, boolean loadingEnabled) {
+    public void setLoadingEnabled(NavigationView view, boolean loadingEnabled) {
         view.setLoadingEnabled(loadingEnabled);
     }
 
     @ReactProp(name = "moveOnMarkerPress", defaultBoolean = true)
-    public void setMoveOnMarkerPress(MapView view, boolean moveOnPress) {
+    public void setMoveOnMarkerPress(NavigationView view, boolean moveOnPress) {
         view.setMoveOnMarkerPress(moveOnPress);
     }
 
     @ReactProp(name = "loadingBackgroundColor", customType = "Color")
-    public void setLoadingBackgroundColor(MapView view, @Nullable Integer loadingBackgroundColor) {
+    public void setLoadingBackgroundColor(NavigationView view, @Nullable Integer loadingBackgroundColor) {
         view.setLoadingBackgroundColor(loadingBackgroundColor);
     }
 
     @ReactProp(name = "loadingIndicatorColor", customType = "Color")
-    public void setLoadingIndicatorColor(MapView view, @Nullable Integer loadingIndicatorColor) {
+    public void setLoadingIndicatorColor(NavigationView view, @Nullable Integer loadingIndicatorColor) {
         view.setLoadingIndicatorColor(loadingIndicatorColor);
     }
 
     @ReactProp(name = "pitchEnabled", defaultBoolean = false)
-    public void setPitchEnabled(MapView view, boolean pitchEnabled) {
+    public void setPitchEnabled(NavigationView view, boolean pitchEnabled) {
         view.setPitchEnabled(pitchEnabled);
     }
 
     @ReactProp(name = "minZoomLevel")
-    public void setMinZoomLevel(MapView view, float minZoomLevel) {
+    public void setMinZoomLevel(NavigationView view, float minZoomLevel) {
         view.setMinZoomLevel(minZoomLevel);
     }
 
     @ReactProp(name = "maxZoomLevel")
-    public void setMaxZoomLevel(MapView view, float maxZoomLevel) {
+    public void setMaxZoomLevel(NavigationView view, float maxZoomLevel) {
         view.setMaxZoomLevel(maxZoomLevel);
     }
 
     @ReactProp(name = "kmlSrc")
-    public void setKmlSrc(MapView view, String kmlUrl) {
+    public void setKmlSrc(NavigationView view, String kmlUrl) {
         if (kmlUrl != null) {
             view.setKmlSrc(kmlUrl);
         }
     }
 
     @ReactProp(name = "accessibilityLabel")
-    public void setAccessibilityLabel(MapView view, @Nullable String accessibilityLabel) {
+    public void setAccessibilityLabel(NavigationView view, @Nullable String accessibilityLabel) {
         view.setTag(R.id.accessibility_label, accessibilityLabel);
     }
 
       @ReactProp(name = "showsNavigationTripProgressBar", defaultBoolean = false)
-      public void setShowsNavigationTripProgressBar(MapView view, boolean showsNavigationTripProgressBar) {
-        //no-op
+      public void setShowsNavigationTripProgressBar(NavigationView view, boolean showsNavigationTripProgressBar) {
+        view.setShowsNavigationTripProgressBar(showsNavigationTripProgressBar);
       }
 
       @ReactProp(name = "showsTrafficLights", defaultBoolean = false)
-      public void setShowsTrafficLights(MapView view, boolean showsTrafficLights) {
-        //no-op
+      public void setShowsTrafficLights(NavigationView view, boolean showsTrafficLights) {
+        view.setShowsTrafficLights(showsTrafficLights);
       }
 
       @ReactProp(name = "showsStopSigns", defaultBoolean = false)
-      public void setShowsStopSigns(MapView view, boolean showsStopSigns) {
-        //no-op
+      public void setShowsStopSigns(NavigationView view, boolean showsStopSigns) {
+        view.setShowsStopSigns(showsStopSigns);
       }
 
       @ReactProp(name = "showsSpeedometer", defaultBoolean = false)
-      public void setShowsSpeedometer(MapView view, boolean showsSpeedometer) {
-        //no-op
+      public void setShowsSpeedometer(NavigationView view, boolean showsSpeedometer) {
+        view.setShowsSpeedometer(showsSpeedometer);
       }
 
       @ReactProp(name = "showsSpeedLimit", defaultBoolean = false)
-      public void setShowsSpeedLimit(MapView view, boolean showsSpeedLimit) {
-        //no-op
+      public void setShowsSpeedLimit(NavigationView view, boolean showsSpeedLimit) {
+        view.setShowsSpeedLimit(showsSpeedLimit);
       }
 
       @ReactProp(name = "navigationVoiceMuted", defaultBoolean = false)
-      public void setNavigationVoiceMuted(MapView view, boolean navigationVoiceMuted) {
-        //no-op
+      public void setNavigationVoiceMuted(NavigationView view, boolean navigationVoiceMuted) {
+        view.setNavigationVoiceMuted(navigationVoiceMuted);
       }
 
 
     @Override
-    public void receiveCommand(@NonNull MapView view, String commandId, @Nullable ReadableArray args) {
+    public void receiveCommand(@NonNull NavigationView view, String commandId, @Nullable ReadableArray args) {
         int duration;
         double lat;
         double lng;
@@ -458,11 +458,14 @@ public class MapManager extends ViewGroupManager<MapView> {
                 break;
 
             case "recenter":
-                //no-op
+                view.recenter();
                 break;
 
             case "startNavigation":
-                //no-op
+                if (args == null) {
+                    break;
+                }
+                view.startNavigation(args.getMap(0), args.getString(1));
                 break;
         }
     }
@@ -517,27 +520,27 @@ public class MapManager extends ViewGroupManager<MapView> {
     }
 
     @Override
-    public void addView(MapView parent, View child, int index) {
+    public void addView(NavigationView parent, View child, int index) {
         parent.addFeature(child, index);
     }
 
     @Override
-    public int getChildCount(MapView view) {
+    public int getChildCount(NavigationView view) {
         return view.getFeatureCount();
     }
 
     @Override
-    public View getChildAt(MapView view, int index) {
+    public View getChildAt(NavigationView view, int index) {
         return view.getFeatureAt(index);
     }
 
     @Override
-    public void removeViewAt(MapView parent, int index) {
+    public void removeViewAt(NavigationView parent, int index) {
         parent.removeFeatureAt(index);
     }
 
     @Override
-    public void updateExtraData(MapView view, Object extraData) {
+    public void updateExtraData(NavigationView view, Object extraData) {
         view.updateExtraData(extraData);
     }
 
@@ -549,7 +552,7 @@ public class MapManager extends ViewGroupManager<MapView> {
     }
 
     @Override
-    public void onDropViewInstance(MapView view) {
+    public void onDropViewInstance(NavigationView view) {
         view.doDestroy();
         super.onDropViewInstance(view);
     }
