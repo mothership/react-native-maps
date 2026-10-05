@@ -384,6 +384,52 @@ void RNMapsGoogleMapViewEventEmitter::onUserLocationChange(OnUserLocationChange 
 }
 
 
+void RNMapsGoogleMapViewEventEmitter::onShowRecenterButton(OnShowRecenterButton event) const {
+  dispatchEvent("showRecenterButton", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "showRecenterButton", event.showRecenterButton);
+    return payload;
+  });
+}
+
+
+void RNMapsGoogleMapViewEventEmitter::onNavigationRouteLoaded(OnNavigationRouteLoaded event) const {
+  dispatchEvent("navigationRouteLoaded", [](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    
+    return payload;
+  });
+}
+
+
+void RNMapsGoogleMapViewEventEmitter::onNavigationRouteFailedToLoad(OnNavigationRouteFailedToLoad event) const {
+  dispatchEvent("navigationRouteFailedToLoad", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "status", event.status);
+    return payload;
+  });
+}
+
+
+void RNMapsGoogleMapViewEventEmitter::onNavigationInfoUpdated(OnNavigationInfoUpdated event) const {
+  dispatchEvent("navigationInfoUpdated", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "distanceRemaining", event.distanceRemaining);
+    payload.setProperty(runtime, "durationRemaining", event.durationRemaining);
+    return payload;
+  });
+}
+
+
+void RNMapsGoogleMapViewEventEmitter::onArrivedToDestination(OnArrivedToDestination event) const {
+  dispatchEvent("arrivedToDestination", [](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    
+    return payload;
+  });
+}
+
+
 void RNMapsGoogleMarkerEventEmitter::onCalloutPress(OnCalloutPress event) const {
   dispatchEvent("calloutPress", [event=std::move(event)](jsi::Runtime &runtime) {
     auto payload = jsi::Object(runtime);

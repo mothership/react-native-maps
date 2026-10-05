@@ -140,7 +140,16 @@ RNMapsGoogleMapViewProps::RNMapsGoogleMapViewProps(
     userLocationUpdateInterval(convertRawProp(context, rawProps, "userLocationUpdateInterval", sourceProps.userLocationUpdateInterval, {0})),
     zoomControlEnabled(convertRawProp(context, rawProps, "zoomControlEnabled", sourceProps.zoomControlEnabled, {false})),
     zoomEnabled(convertRawProp(context, rawProps, "zoomEnabled", sourceProps.zoomEnabled, {true})),
-    zoomTapEnabled(convertRawProp(context, rawProps, "zoomTapEnabled", sourceProps.zoomTapEnabled, {true})) {}
+    zoomTapEnabled(convertRawProp(context, rawProps, "zoomTapEnabled", sourceProps.zoomTapEnabled, {true})),
+    navigationModeEnabled(convertRawProp(context, rawProps, "navigationModeEnabled", sourceProps.navigationModeEnabled, {false})),
+    navigationVoiceMuted(convertRawProp(context, rawProps, "navigationVoiceMuted", sourceProps.navigationVoiceMuted, {false})),
+    showsNavigationTripProgressBar(convertRawProp(context, rawProps, "showsNavigationTripProgressBar", sourceProps.showsNavigationTripProgressBar, {false})),
+    showsTrafficLights(convertRawProp(context, rawProps, "showsTrafficLights", sourceProps.showsTrafficLights, {false})),
+    showsStopSigns(convertRawProp(context, rawProps, "showsStopSigns", sourceProps.showsStopSigns, {false})),
+    showsSpeedometer(convertRawProp(context, rawProps, "showsSpeedometer", sourceProps.showsSpeedometer, {false})),
+    showsSpeedLimit(convertRawProp(context, rawProps, "showsSpeedLimit", sourceProps.showsSpeedLimit, {false})),
+    showsReportIncidentButton(convertRawProp(context, rawProps, "showsReportIncidentButton", sourceProps.showsReportIncidentButton, {true})),
+    termsCompanyName(convertRawProp(context, rawProps, "termsCompanyName", sourceProps.termsCompanyName, {})) {}
     
 #ifdef RN_SERIALIZABLE_STATE
 ComponentName RNMapsGoogleMapViewProps::getDiffPropsImplementationTarget() const {
@@ -288,6 +297,42 @@ folly::dynamic RNMapsGoogleMapViewProps::getDiffProps(
     
   if (zoomTapEnabled != oldProps->zoomTapEnabled) {
     result["zoomTapEnabled"] = zoomTapEnabled;
+  }
+    
+  if (navigationModeEnabled != oldProps->navigationModeEnabled) {
+    result["navigationModeEnabled"] = navigationModeEnabled;
+  }
+    
+  if (navigationVoiceMuted != oldProps->navigationVoiceMuted) {
+    result["navigationVoiceMuted"] = navigationVoiceMuted;
+  }
+    
+  if (showsNavigationTripProgressBar != oldProps->showsNavigationTripProgressBar) {
+    result["showsNavigationTripProgressBar"] = showsNavigationTripProgressBar;
+  }
+    
+  if (showsTrafficLights != oldProps->showsTrafficLights) {
+    result["showsTrafficLights"] = showsTrafficLights;
+  }
+    
+  if (showsStopSigns != oldProps->showsStopSigns) {
+    result["showsStopSigns"] = showsStopSigns;
+  }
+    
+  if (showsSpeedometer != oldProps->showsSpeedometer) {
+    result["showsSpeedometer"] = showsSpeedometer;
+  }
+    
+  if (showsSpeedLimit != oldProps->showsSpeedLimit) {
+    result["showsSpeedLimit"] = showsSpeedLimit;
+  }
+    
+  if (showsReportIncidentButton != oldProps->showsReportIncidentButton) {
+    result["showsReportIncidentButton"] = showsReportIncidentButton;
+  }
+    
+  if (termsCompanyName != oldProps->termsCompanyName) {
+    result["termsCompanyName"] = termsCompanyName;
   }
   return result;
 }
@@ -859,6 +904,335 @@ folly::dynamic RNMapsMarkerProps::getDiffProps(
     
   if (useLegacyPinView != oldProps->useLegacyPinView) {
     result["useLegacyPinView"] = useLegacyPinView;
+  }
+  return result;
+}
+#endif
+RNMapsNavigationMapViewProps::RNMapsNavigationMapViewProps(
+    const PropsParserContext &context,
+    const RNMapsNavigationMapViewProps &sourceProps,
+    const RawProps &rawProps): ViewProps(context, sourceProps, rawProps),
+
+    cacheEnabled(convertRawProp(context, rawProps, "cacheEnabled", sourceProps.cacheEnabled, {false})),
+    camera(convertRawProp(context, rawProps, "camera", sourceProps.camera, {})),
+    compassOffset(convertRawProp(context, rawProps, "compassOffset", sourceProps.compassOffset, {})),
+    followsUserLocation(convertRawProp(context, rawProps, "followsUserLocation", sourceProps.followsUserLocation, {false})),
+    poiClickEnabled(convertRawProp(context, rawProps, "poiClickEnabled", sourceProps.poiClickEnabled, {false})),
+    initialCamera(convertRawProp(context, rawProps, "initialCamera", sourceProps.initialCamera, {})),
+    initialRegion(convertRawProp(context, rawProps, "initialRegion", sourceProps.initialRegion, {})),
+    kmlSrc(convertRawProp(context, rawProps, "kmlSrc", sourceProps.kmlSrc, {})),
+    legalLabelInsets(convertRawProp(context, rawProps, "legalLabelInsets", sourceProps.legalLabelInsets, {})),
+    appleLogoInsets(convertRawProp(context, rawProps, "appleLogoInsets", sourceProps.appleLogoInsets, {})),
+    liteMode(convertRawProp(context, rawProps, "liteMode", sourceProps.liteMode, {false})),
+    googleMapId(convertRawProp(context, rawProps, "googleMapId", sourceProps.googleMapId, {})),
+    googleRenderer(convertRawProp(context, rawProps, "googleRenderer", sourceProps.googleRenderer, {RNMapsNavigationMapViewGoogleRenderer::LATEST})),
+    loadingBackgroundColor(convertRawProp(context, rawProps, "loadingBackgroundColor", sourceProps.loadingBackgroundColor, {})),
+    loadingEnabled(convertRawProp(context, rawProps, "loadingEnabled", sourceProps.loadingEnabled, {false})),
+    loadingIndicatorColor(convertRawProp(context, rawProps, "loadingIndicatorColor", sourceProps.loadingIndicatorColor, {})),
+    mapPadding(convertRawProp(context, rawProps, "mapPadding", sourceProps.mapPadding, {})),
+    mapType(convertRawProp(context, rawProps, "mapType", sourceProps.mapType, {RNMapsNavigationMapViewMapType::Standard})),
+    maxDelta(convertRawProp(context, rawProps, "maxDelta", sourceProps.maxDelta, {0.0})),
+    maxZoom(convertRawProp(context, rawProps, "maxZoom", sourceProps.maxZoom, {0.0})),
+    minDelta(convertRawProp(context, rawProps, "minDelta", sourceProps.minDelta, {0.0})),
+    minZoom(convertRawProp(context, rawProps, "minZoom", sourceProps.minZoom, {0.0})),
+    moveOnMarkerPress(convertRawProp(context, rawProps, "moveOnMarkerPress", sourceProps.moveOnMarkerPress, {true})),
+    handlePanDrag(convertRawProp(context, rawProps, "handlePanDrag", sourceProps.handlePanDrag, {false})),
+    paddingAdjustmentBehavior(convertRawProp(context, rawProps, "paddingAdjustmentBehavior", sourceProps.paddingAdjustmentBehavior, {RNMapsNavigationMapViewPaddingAdjustmentBehavior::Never})),
+    pitchEnabled(convertRawProp(context, rawProps, "pitchEnabled", sourceProps.pitchEnabled, {true})),
+    region(convertRawProp(context, rawProps, "region", sourceProps.region, {})),
+    rotateEnabled(convertRawProp(context, rawProps, "rotateEnabled", sourceProps.rotateEnabled, {true})),
+    scrollDuringRotateOrZoomEnabled(convertRawProp(context, rawProps, "scrollDuringRotateOrZoomEnabled", sourceProps.scrollDuringRotateOrZoomEnabled, {true})),
+    scrollEnabled(convertRawProp(context, rawProps, "scrollEnabled", sourceProps.scrollEnabled, {true})),
+    showsBuildings(convertRawProp(context, rawProps, "showsBuildings", sourceProps.showsBuildings, {true})),
+    showsCompass(convertRawProp(context, rawProps, "showsCompass", sourceProps.showsCompass, {true})),
+    showsIndoorLevelPicker(convertRawProp(context, rawProps, "showsIndoorLevelPicker", sourceProps.showsIndoorLevelPicker, {false})),
+    showsIndoors(convertRawProp(context, rawProps, "showsIndoors", sourceProps.showsIndoors, {true})),
+    showsPointsOfInterests(convertRawProp(context, rawProps, "showsPointsOfInterests", sourceProps.showsPointsOfInterests, {true})),
+    pointsOfInterestFilter(convertRawProp(context, rawProps, "pointsOfInterestFilter", sourceProps.pointsOfInterestFilter, {})),
+    showsMyLocationButton(convertRawProp(context, rawProps, "showsMyLocationButton", sourceProps.showsMyLocationButton, {false})),
+    showsScale(convertRawProp(context, rawProps, "showsScale", sourceProps.showsScale, {false})),
+    showsUserLocation(convertRawProp(context, rawProps, "showsUserLocation", sourceProps.showsUserLocation, {false})),
+    tintColor(convertRawProp(context, rawProps, "tintColor", sourceProps.tintColor, {})),
+    toolbarEnabled(convertRawProp(context, rawProps, "toolbarEnabled", sourceProps.toolbarEnabled, {true})),
+    userInterfaceStyle(convertRawProp(context, rawProps, "userInterfaceStyle", sourceProps.userInterfaceStyle, {RNMapsNavigationMapViewUserInterfaceStyle::System})),
+    customMapStyleString(convertRawProp(context, rawProps, "customMapStyleString", sourceProps.customMapStyleString, {})),
+    userLocationAnnotationTitle(convertRawProp(context, rawProps, "userLocationAnnotationTitle", sourceProps.userLocationAnnotationTitle, {})),
+    userLocationCalloutEnabled(convertRawProp(context, rawProps, "userLocationCalloutEnabled", sourceProps.userLocationCalloutEnabled, {false})),
+    userLocationFastestInterval(convertRawProp(context, rawProps, "userLocationFastestInterval", sourceProps.userLocationFastestInterval, {5000})),
+    userLocationPriority(convertRawProp(context, rawProps, "userLocationPriority", sourceProps.userLocationPriority, {RNMapsNavigationMapViewUserLocationPriority::High})),
+    userLocationUpdateInterval(convertRawProp(context, rawProps, "userLocationUpdateInterval", sourceProps.userLocationUpdateInterval, {5000})),
+    zoomControlEnabled(convertRawProp(context, rawProps, "zoomControlEnabled", sourceProps.zoomControlEnabled, {true})),
+    zoomEnabled(convertRawProp(context, rawProps, "zoomEnabled", sourceProps.zoomEnabled, {true})),
+    showsTraffic(convertRawProp(context, rawProps, "showsTraffic", sourceProps.showsTraffic, {false})),
+    zoomTapEnabled(convertRawProp(context, rawProps, "zoomTapEnabled", sourceProps.zoomTapEnabled, {true})),
+    cameraZoomRange(convertRawProp(context, rawProps, "cameraZoomRange", sourceProps.cameraZoomRange, {})),
+    showsNavigationTripProgressBar(convertRawProp(context, rawProps, "showsNavigationTripProgressBar", sourceProps.showsNavigationTripProgressBar, {false})),
+    showsTrafficLights(convertRawProp(context, rawProps, "showsTrafficLights", sourceProps.showsTrafficLights, {false})),
+    showsStopSigns(convertRawProp(context, rawProps, "showsStopSigns", sourceProps.showsStopSigns, {false})),
+    showsSpeedometer(convertRawProp(context, rawProps, "showsSpeedometer", sourceProps.showsSpeedometer, {false})),
+    showsSpeedLimit(convertRawProp(context, rawProps, "showsSpeedLimit", sourceProps.showsSpeedLimit, {false})),
+    showsReportIncidentButton(convertRawProp(context, rawProps, "showsReportIncidentButton", sourceProps.showsReportIncidentButton, {true})),
+    navigationVoiceMuted(convertRawProp(context, rawProps, "navigationVoiceMuted", sourceProps.navigationVoiceMuted, {false})),
+    termsCompanyName(convertRawProp(context, rawProps, "termsCompanyName", sourceProps.termsCompanyName, {})) {}
+    
+#ifdef RN_SERIALIZABLE_STATE
+ComponentName RNMapsNavigationMapViewProps::getDiffPropsImplementationTarget() const {
+  return "RNMapsNavigationMapView";
+}
+
+folly::dynamic RNMapsNavigationMapViewProps::getDiffProps(
+    const Props* prevProps) const {
+  static const auto defaultProps = RNMapsNavigationMapViewProps();
+  const RNMapsNavigationMapViewProps* oldProps = prevProps == nullptr
+      ? &defaultProps
+      : static_cast<const RNMapsNavigationMapViewProps*>(prevProps);
+  if (this == oldProps) {
+    return folly::dynamic::object();
+  }
+  folly::dynamic result = HostPlatformViewProps::getDiffProps(prevProps);
+  
+  if (cacheEnabled != oldProps->cacheEnabled) {
+    result["cacheEnabled"] = cacheEnabled;
+  }
+    
+  if (camera != oldProps->camera) {
+    result["camera"] = toDynamic(camera);
+  }
+    
+  if (compassOffset != oldProps->compassOffset) {
+    result["compassOffset"] = toDynamic(compassOffset);
+  }
+    
+  if (followsUserLocation != oldProps->followsUserLocation) {
+    result["followsUserLocation"] = followsUserLocation;
+  }
+    
+  if (poiClickEnabled != oldProps->poiClickEnabled) {
+    result["poiClickEnabled"] = poiClickEnabled;
+  }
+    
+  if (initialCamera != oldProps->initialCamera) {
+    result["initialCamera"] = toDynamic(initialCamera);
+  }
+    
+  if (initialRegion != oldProps->initialRegion) {
+    result["initialRegion"] = toDynamic(initialRegion);
+  }
+    
+  if (kmlSrc != oldProps->kmlSrc) {
+    result["kmlSrc"] = kmlSrc;
+  }
+    
+  if (legalLabelInsets != oldProps->legalLabelInsets) {
+    result["legalLabelInsets"] = toDynamic(legalLabelInsets);
+  }
+    
+  if (appleLogoInsets != oldProps->appleLogoInsets) {
+    result["appleLogoInsets"] = toDynamic(appleLogoInsets);
+  }
+    
+  if (liteMode != oldProps->liteMode) {
+    result["liteMode"] = liteMode;
+  }
+    
+  if (googleMapId != oldProps->googleMapId) {
+    result["googleMapId"] = googleMapId;
+  }
+    
+  if (googleRenderer != oldProps->googleRenderer) {
+    result["googleRenderer"] = toDynamic(googleRenderer);
+  }
+    
+  if (loadingBackgroundColor != oldProps->loadingBackgroundColor) {
+    result["loadingBackgroundColor"] = *loadingBackgroundColor;
+  }
+    
+  if (loadingEnabled != oldProps->loadingEnabled) {
+    result["loadingEnabled"] = loadingEnabled;
+  }
+    
+  if (loadingIndicatorColor != oldProps->loadingIndicatorColor) {
+    result["loadingIndicatorColor"] = *loadingIndicatorColor;
+  }
+    
+  if (mapPadding != oldProps->mapPadding) {
+    result["mapPadding"] = toDynamic(mapPadding);
+  }
+    
+  if (mapType != oldProps->mapType) {
+    result["mapType"] = toDynamic(mapType);
+  }
+    
+  if ((maxDelta != oldProps->maxDelta) && !(std::isnan(maxDelta) && std::isnan(oldProps->maxDelta))) {
+    result["maxDelta"] = maxDelta;
+  }
+    
+  if ((maxZoom != oldProps->maxZoom) && !(std::isnan(maxZoom) && std::isnan(oldProps->maxZoom))) {
+    result["maxZoom"] = maxZoom;
+  }
+    
+  if ((minDelta != oldProps->minDelta) && !(std::isnan(minDelta) && std::isnan(oldProps->minDelta))) {
+    result["minDelta"] = minDelta;
+  }
+    
+  if ((minZoom != oldProps->minZoom) && !(std::isnan(minZoom) && std::isnan(oldProps->minZoom))) {
+    result["minZoom"] = minZoom;
+  }
+    
+  if (moveOnMarkerPress != oldProps->moveOnMarkerPress) {
+    result["moveOnMarkerPress"] = moveOnMarkerPress;
+  }
+    
+  if (handlePanDrag != oldProps->handlePanDrag) {
+    result["handlePanDrag"] = handlePanDrag;
+  }
+    
+  if (paddingAdjustmentBehavior != oldProps->paddingAdjustmentBehavior) {
+    result["paddingAdjustmentBehavior"] = toDynamic(paddingAdjustmentBehavior);
+  }
+    
+  if (pitchEnabled != oldProps->pitchEnabled) {
+    result["pitchEnabled"] = pitchEnabled;
+  }
+    
+  if (region != oldProps->region) {
+    result["region"] = toDynamic(region);
+  }
+    
+  if (rotateEnabled != oldProps->rotateEnabled) {
+    result["rotateEnabled"] = rotateEnabled;
+  }
+    
+  if (scrollDuringRotateOrZoomEnabled != oldProps->scrollDuringRotateOrZoomEnabled) {
+    result["scrollDuringRotateOrZoomEnabled"] = scrollDuringRotateOrZoomEnabled;
+  }
+    
+  if (scrollEnabled != oldProps->scrollEnabled) {
+    result["scrollEnabled"] = scrollEnabled;
+  }
+    
+  if (showsBuildings != oldProps->showsBuildings) {
+    result["showsBuildings"] = showsBuildings;
+  }
+    
+  if (showsCompass != oldProps->showsCompass) {
+    result["showsCompass"] = showsCompass;
+  }
+    
+  if (showsIndoorLevelPicker != oldProps->showsIndoorLevelPicker) {
+    result["showsIndoorLevelPicker"] = showsIndoorLevelPicker;
+  }
+    
+  if (showsIndoors != oldProps->showsIndoors) {
+    result["showsIndoors"] = showsIndoors;
+  }
+    
+  if (showsPointsOfInterests != oldProps->showsPointsOfInterests) {
+    result["showsPointsOfInterests"] = showsPointsOfInterests;
+  }
+    
+  if (pointsOfInterestFilter != oldProps->pointsOfInterestFilter) {
+    result["pointsOfInterestFilter"] = toDynamic(pointsOfInterestFilter);
+  }
+    
+  if (showsMyLocationButton != oldProps->showsMyLocationButton) {
+    result["showsMyLocationButton"] = showsMyLocationButton;
+  }
+    
+  if (showsScale != oldProps->showsScale) {
+    result["showsScale"] = showsScale;
+  }
+    
+  if (showsUserLocation != oldProps->showsUserLocation) {
+    result["showsUserLocation"] = showsUserLocation;
+  }
+    
+  if (tintColor != oldProps->tintColor) {
+    result["tintColor"] = *tintColor;
+  }
+    
+  if (toolbarEnabled != oldProps->toolbarEnabled) {
+    result["toolbarEnabled"] = toolbarEnabled;
+  }
+    
+  if (userInterfaceStyle != oldProps->userInterfaceStyle) {
+    result["userInterfaceStyle"] = toDynamic(userInterfaceStyle);
+  }
+    
+  if (customMapStyleString != oldProps->customMapStyleString) {
+    result["customMapStyleString"] = customMapStyleString;
+  }
+    
+  if (userLocationAnnotationTitle != oldProps->userLocationAnnotationTitle) {
+    result["userLocationAnnotationTitle"] = userLocationAnnotationTitle;
+  }
+    
+  if (userLocationCalloutEnabled != oldProps->userLocationCalloutEnabled) {
+    result["userLocationCalloutEnabled"] = userLocationCalloutEnabled;
+  }
+    
+  if (userLocationFastestInterval != oldProps->userLocationFastestInterval) {
+    result["userLocationFastestInterval"] = userLocationFastestInterval;
+  }
+    
+  if (userLocationPriority != oldProps->userLocationPriority) {
+    result["userLocationPriority"] = toDynamic(userLocationPriority);
+  }
+    
+  if (userLocationUpdateInterval != oldProps->userLocationUpdateInterval) {
+    result["userLocationUpdateInterval"] = userLocationUpdateInterval;
+  }
+    
+  if (zoomControlEnabled != oldProps->zoomControlEnabled) {
+    result["zoomControlEnabled"] = zoomControlEnabled;
+  }
+    
+  if (zoomEnabled != oldProps->zoomEnabled) {
+    result["zoomEnabled"] = zoomEnabled;
+  }
+    
+  if (showsTraffic != oldProps->showsTraffic) {
+    result["showsTraffic"] = showsTraffic;
+  }
+    
+  if (zoomTapEnabled != oldProps->zoomTapEnabled) {
+    result["zoomTapEnabled"] = zoomTapEnabled;
+  }
+    
+  if (cameraZoomRange != oldProps->cameraZoomRange) {
+    result["cameraZoomRange"] = toDynamic(cameraZoomRange);
+  }
+    
+  if (showsNavigationTripProgressBar != oldProps->showsNavigationTripProgressBar) {
+    result["showsNavigationTripProgressBar"] = showsNavigationTripProgressBar;
+  }
+    
+  if (showsTrafficLights != oldProps->showsTrafficLights) {
+    result["showsTrafficLights"] = showsTrafficLights;
+  }
+    
+  if (showsStopSigns != oldProps->showsStopSigns) {
+    result["showsStopSigns"] = showsStopSigns;
+  }
+    
+  if (showsSpeedometer != oldProps->showsSpeedometer) {
+    result["showsSpeedometer"] = showsSpeedometer;
+  }
+    
+  if (showsSpeedLimit != oldProps->showsSpeedLimit) {
+    result["showsSpeedLimit"] = showsSpeedLimit;
+  }
+    
+  if (showsReportIncidentButton != oldProps->showsReportIncidentButton) {
+    result["showsReportIncidentButton"] = showsReportIncidentButton;
+  }
+    
+  if (navigationVoiceMuted != oldProps->navigationVoiceMuted) {
+    result["navigationVoiceMuted"] = navigationVoiceMuted;
+  }
+    
+  if (termsCompanyName != oldProps->termsCompanyName) {
+    result["termsCompanyName"] = termsCompanyName;
   }
   return result;
 }

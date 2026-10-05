@@ -14,6 +14,7 @@ import com.rnmaps.fabric.CalloutManager;
 import com.rnmaps.fabric.CircleManager;
 import com.rnmaps.fabric.MapViewManager;
 import com.rnmaps.fabric.MarkerManager;
+import com.rnmaps.fabric.NavigationMapViewManager;
 import com.rnmaps.fabric.NativeAirMapsModule;
 import com.rnmaps.fabric.OverlayManager;
 import com.rnmaps.fabric.PolygonManager;
@@ -30,6 +31,7 @@ public class MapsPackage extends BaseReactPackage implements ReactPackage {
   @Override
   public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
     return List.of(new MapViewManager(reactContext),
+            new NavigationMapViewManager(reactContext),
             new MarkerManager(reactContext),
             new CalloutManager(reactContext),
             new PolygonManager(reactContext),
@@ -66,6 +68,9 @@ public class MapsPackage extends BaseReactPackage implements ReactPackage {
     }
     if (MapViewManager.REACT_CLASS.equals(name)) {
       return new MapViewManager(reactContext);
+    }
+    if (NavigationMapViewManager.REACT_CLASS.equals(name)) {
+      return new NavigationMapViewManager(reactContext);
     }
     if (UrlTileManager.REACT_CLASS.equals(name)) {
       return new UrlTileManager(reactContext);

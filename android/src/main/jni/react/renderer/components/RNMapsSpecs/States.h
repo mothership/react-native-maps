@@ -29,6 +29,8 @@ using RNMapsMapViewState = StateData;
 
 using RNMapsMarkerState = StateData;
 
+using RNMapsNavigationMapViewState = StateData;
+
 using RNMapsOverlayState = StateData;
 
 using RNMapsPolygonState = StateData;

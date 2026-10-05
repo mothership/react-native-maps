@@ -45,6 +45,7 @@ import ImageOverlayWithAssets from './examples/ImageOverlayWithAssets';
 import ImageOverlayWithURL from './examples/ImageOverlayWithURL';
 import ImageOverlayWithBearing from './examples/ImageOverlayWithBearing';
 import AnimatedNavigation from './examples/AnimatedNavigation';
+import GoogleNavigation from './examples/GoogleNavigation';
 import OnPoiClick from './examples/OnPoiClick';
 import TestIdMarkers from './examples/TestIdMarkers';
 import IndoorMap from './examples/IndoorMap';
@@ -177,6 +178,7 @@ export default class App extends React.Component<any, any> {
         [ImageOverlayWithURL, 'Image Overlay Component with URL', true],
         [ImageOverlayWithBearing, 'Image Overlay with Bearing', true],
         [AnimatedNavigation, 'Animated Map Navigation', true],
+        [GoogleNavigation, 'Google Navigation SDK', true],
         [OnPoiClick, 'On Poi Click', true],
         [IndoorMap, 'Indoor Map', true],
         [CameraControl, 'CameraControl', true],

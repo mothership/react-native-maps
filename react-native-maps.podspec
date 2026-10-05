@@ -115,6 +115,7 @@ Pod::Spec.new do |s|
     
     google_maps_version = '9.4.0'
     google_maps_utils_version = '6.1.0'
+    google_navigation_version = '9.4.0'
 
     if defined?($RNMapsGoogleMapsVersion)
       Pod::UI.puts "#{s.name}: Using user specified GoogleMaps version '#{$RNMapsGoogleMapsVersion}'"
@@ -126,8 +127,14 @@ Pod::Spec.new do |s|
       google_maps_utils_version = $RNMapsGoogleMapsUtilsVersion
     end
 
+    if defined?($RNMapsGoogleNavigationVersion)
+      Pod::UI.puts "#{s.name}: Using user specified GoogleNavigation version '#{$RNMapsGoogleNavigationVersion}'"
+      google_navigation_version = $RNMapsGoogleNavigationVersion
+    end
+
     ss.dependency 'GoogleMaps', google_maps_version #'8.4.0'
     ss.dependency 'Google-Maps-iOS-Utils', google_maps_utils_version #'5.0.0'
+    ss.dependency 'GoogleNavigation', google_navigation_version
     ss.dependency 'react-native-maps/Generated'
     ss.dependency 'react-native-maps/Maps'
     install_modules_dependencies(ss)

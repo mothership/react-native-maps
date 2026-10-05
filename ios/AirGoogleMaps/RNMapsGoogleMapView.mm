@@ -113,6 +113,19 @@ using namespace facebook::react;
 
 }
 
+- (void)startNavigation:(NSString *)coordinateJSON placeId:(NSString *)placeId {
+    NSDictionary* coordinateDic = [RCTConvert dictonaryFromString:coordinateJSON];
+    CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(
+        [coordinateDic[@"latitude"] doubleValue],
+        [coordinateDic[@"longitude"] doubleValue]
+    );
+    [_view startNavigationWithCoordinate:coord andPlaceId:placeId];
+}
+
+- (void)recenter {
+    [_view recenter];
+}
+
 #pragma mark - Native commands
 
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
@@ -437,6 +450,54 @@ using namespace facebook::react;
       _view.onMarkerPress = [self](NSDictionary* dictionary) {
           HANDLE_MARKER_EVENT(OnMarkerPress, onMarkerPress, "marker-press");
       };
+
+      _view.onShowRecenterButton = [self](NSDictionary* dictionary) {
+          if (_eventEmitter) {
+              auto mapViewEventEmitter = std::static_pointer_cast<RNMapsGoogleMapViewEventEmitter const>(_eventEmitter);
+              facebook::react::RNMapsGoogleMapViewEventEmitter::OnShowRecenterButton data = {
+                  .showRecenterButton = [dictionary[@"showRecenterButton"] boolValue],
+              };
+              mapViewEventEmitter->onShowRecenterButton(data);
+          }
+      };
+
+      _view.onNavigationRouteLoaded = [self](NSDictionary* dictionary) {
+          if (_eventEmitter) {
+              auto mapViewEventEmitter = std::static_pointer_cast<RNMapsGoogleMapViewEventEmitter const>(_eventEmitter);
+              facebook::react::RNMapsGoogleMapViewEventEmitter::OnNavigationRouteLoaded data = {};
+              mapViewEventEmitter->onNavigationRouteLoaded(data);
+          }
+      };
+
+      _view.onNavigationRouteFailedToLoad = [self](NSDictionary* dictionary) {
+          if (_eventEmitter) {
+              auto mapViewEventEmitter = std::static_pointer_cast<RNMapsGoogleMapViewEventEmitter const>(_eventEmitter);
+              NSString *status = dictionary[@"status"] ?: @"";
+              facebook::react::RNMapsGoogleMapViewEventEmitter::OnNavigationRouteFailedToLoad data = {
+                  .status = std::string([status UTF8String]),
+              };
+              mapViewEventEmitter->onNavigationRouteFailedToLoad(data);
+          }
+      };
+
+      _view.onNavigationInfoUpdated = [self](NSDictionary* dictionary) {
+          if (_eventEmitter) {
+              auto mapViewEventEmitter = std::static_pointer_cast<RNMapsGoogleMapViewEventEmitter const>(_eventEmitter);
+              facebook::react::RNMapsGoogleMapViewEventEmitter::OnNavigationInfoUpdated data = {
+                  .distanceRemaining = [dictionary[@"distanceRemaining"] doubleValue],
+                  .durationRemaining = [dictionary[@"durationRemaining"] doubleValue],
+              };
+              mapViewEventEmitter->onNavigationInfoUpdated(data);
+          }
+      };
+
+      _view.onArrivedToDestination = [self](NSDictionary* dictionary) {
+          if (_eventEmitter) {
+              auto mapViewEventEmitter = std::static_pointer_cast<RNMapsGoogleMapViewEventEmitter const>(_eventEmitter);
+              facebook::react::RNMapsGoogleMapViewEventEmitter::OnArrivedToDestination data = {};
+              mapViewEventEmitter->onArrivedToDestination(data);
+          }
+      };
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -613,6 +674,15 @@ using namespace facebook::react;
     REMAP_MAPVIEW_PROP(showsTraffic)
     REMAP_MAPVIEW_PROP(showsUserLocation)
     REMAP_MAPVIEW_PROP(zoomEnabled)
+    REMAP_MAPVIEW_PROP(navigationModeEnabled)
+    REMAP_MAPVIEW_PROP(navigationVoiceMuted)
+    REMAP_MAPVIEW_PROP(showsNavigationTripProgressBar)
+    REMAP_MAPVIEW_PROP(showsTrafficLights)
+    REMAP_MAPVIEW_PROP(showsStopSigns)
+    REMAP_MAPVIEW_PROP(showsSpeedometer)
+    REMAP_MAPVIEW_PROP(showsSpeedLimit)
+    REMAP_MAPVIEW_PROP(showsReportIncidentButton)
+    REMAP_MAPVIEW_STRING_PROP(termsCompanyName)
 
 
     REMAP_MAPVIEW_REGION_PROP(region)

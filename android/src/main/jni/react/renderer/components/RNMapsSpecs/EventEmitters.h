@@ -292,6 +292,27 @@ class RNMapsGoogleMapViewEventEmitter : public ViewEventEmitter {
       OnUserLocationChangeCoordinate coordinate;
     OnUserLocationChangeError error;
     };
+
+  struct OnShowRecenterButton {
+      bool showRecenterButton;
+    };
+
+  struct OnNavigationRouteLoaded {
+      
+    };
+
+  struct OnNavigationRouteFailedToLoad {
+      
+    };
+
+  struct OnNavigationInfoUpdated {
+      double distanceRemaining;
+    double durationRemaining;
+    };
+
+  struct OnArrivedToDestination {
+      
+    };
   void onIndoorBuildingFocused(OnIndoorBuildingFocused value) const;
 
   void onIndoorLevelActivated(OnIndoorLevelActivated value) const;
@@ -329,6 +350,16 @@ class RNMapsGoogleMapViewEventEmitter : public ViewEventEmitter {
   void onRegionChangeComplete(OnRegionChangeComplete value) const;
 
   void onUserLocationChange(OnUserLocationChange value) const;
+
+  void onShowRecenterButton(OnShowRecenterButton value) const;
+
+  void onNavigationRouteLoaded(OnNavigationRouteLoaded value) const;
+
+  void onNavigationRouteFailedToLoad(OnNavigationRouteFailedToLoad value) const;
+
+  void onNavigationInfoUpdated(OnNavigationInfoUpdated value) const;
+
+  void onArrivedToDestination(OnArrivedToDestination value) const;
 };
 class RNMapsGoogleMarkerEventEmitter : public ViewEventEmitter {
  public:
@@ -933,6 +964,367 @@ class RNMapsMarkerEventEmitter : public ViewEventEmitter {
   void onPress(OnPress value) const;
 
   void onSelect(OnSelect value) const;
+};
+class RNMapsNavigationMapViewEventEmitter : public ViewEventEmitter {
+ public:
+  using ViewEventEmitter::ViewEventEmitter;
+
+  struct OnCalloutPressFrame {
+      double x;
+    double y;
+    double width;
+    double height;
+    };
+
+  struct OnCalloutPressPoint {
+      double x;
+    double y;
+    };
+
+  struct OnCalloutPressCoordinate {
+      double latitude;
+    double longitude;
+    };
+
+  struct OnCalloutPressPosition {
+      double x;
+    double y;
+    };
+
+  struct OnCalloutPress {
+      std::string action;
+    OnCalloutPressFrame frame;
+    std::string id;
+    OnCalloutPressPoint point;
+    OnCalloutPressCoordinate coordinate;
+    OnCalloutPressPosition position;
+    };
+
+  struct OnDoublePressCoordinate {
+      double latitude;
+    double longitude;
+    };
+
+  struct OnDoublePressPosition {
+      double x;
+    double y;
+    };
+
+  struct OnDoublePress {
+      OnDoublePressCoordinate coordinate;
+    OnDoublePressPosition position;
+    };
+
+  struct OnIndoorBuildingFocusedIndoorBuilding {
+      bool underground;
+    int activeLevelIndex;
+    };
+
+  struct OnIndoorBuildingFocused {
+      OnIndoorBuildingFocusedIndoorBuilding IndoorBuilding;
+    };
+
+  struct OnIndoorLevelActivatedIndoorLevel {
+      int activeLevelIndex;
+    std::string name;
+    std::string shortName;
+    };
+
+  struct OnIndoorLevelActivated {
+      OnIndoorLevelActivatedIndoorLevel IndoorLevel;
+    };
+
+  struct OnKmlReady {
+      
+    };
+
+  struct OnLongPressCoordinate {
+      double latitude;
+    double longitude;
+    };
+
+  struct OnLongPressPosition {
+      double x;
+    double y;
+    };
+
+  struct OnLongPress {
+      OnLongPressCoordinate coordinate;
+    OnLongPressPosition position;
+    std::string action;
+    };
+
+  struct OnMapLoaded {
+      
+    };
+
+  struct OnMapReady {
+      
+    };
+
+  struct OnMarkerDeselectCoordinate {
+      double latitude;
+    double longitude;
+    };
+
+  struct OnMarkerDeselect {
+      std::string action;
+    std::string id;
+    OnMarkerDeselectCoordinate coordinate;
+    };
+
+  struct OnMarkerDragCoordinate {
+      double latitude;
+    double longitude;
+    };
+
+  struct OnMarkerDragPosition {
+      double x;
+    double y;
+    };
+
+  struct OnMarkerDrag {
+      OnMarkerDragCoordinate coordinate;
+    OnMarkerDragPosition position;
+    std::string id;
+    };
+
+  struct OnMarkerDragEndCoordinate {
+      double latitude;
+    double longitude;
+    };
+
+  struct OnMarkerDragEndPosition {
+      double x;
+    double y;
+    };
+
+  struct OnMarkerDragEnd {
+      OnMarkerDragEndCoordinate coordinate;
+    std::string id;
+    OnMarkerDragEndPosition position;
+    };
+
+  struct OnMarkerDragStartCoordinate {
+      double latitude;
+    double longitude;
+    };
+
+  struct OnMarkerDragStartPosition {
+      double x;
+    double y;
+    };
+
+  struct OnMarkerDragStart {
+      OnMarkerDragStartCoordinate coordinate;
+    std::string id;
+    OnMarkerDragStartPosition position;
+    };
+
+  struct OnMarkerPressCoordinate {
+      double latitude;
+    double longitude;
+    };
+
+  struct OnMarkerPressPosition {
+      double x;
+    double y;
+    };
+
+  struct OnMarkerPress {
+      std::string action;
+    std::string id;
+    OnMarkerPressCoordinate coordinate;
+    OnMarkerPressPosition position;
+    };
+
+  struct OnMarkerSelectCoordinate {
+      double latitude;
+    double longitude;
+    };
+
+  struct OnMarkerSelect {
+      std::string action;
+    std::string id;
+    OnMarkerSelectCoordinate coordinate;
+    };
+
+  struct OnPanDragCoordinate {
+      double latitude;
+    double longitude;
+    };
+
+  struct OnPanDragPosition {
+      double x;
+    double y;
+    };
+
+  struct OnPanDrag {
+      OnPanDragCoordinate coordinate;
+    OnPanDragPosition position;
+    };
+
+  struct OnPoiClickCoordinate {
+      double latitude;
+    double longitude;
+    };
+
+  struct OnPoiClickPosition {
+      double x;
+    double y;
+    };
+
+  struct OnPoiClick {
+      std::string placeId;
+    std::string name;
+    OnPoiClickCoordinate coordinate;
+    OnPoiClickPosition position;
+    };
+
+  struct OnPressCoordinate {
+      double latitude;
+    double longitude;
+    };
+
+  struct OnPressPosition {
+      double x;
+    double y;
+    };
+
+  struct OnPress {
+      OnPressCoordinate coordinate;
+    OnPressPosition position;
+    std::string action;
+    };
+
+  struct OnRegionChangeStartRegion {
+      double latitude;
+    double longitude;
+    double latitudeDelta;
+    double longitudeDelta;
+    };
+
+  struct OnRegionChangeStart {
+      OnRegionChangeStartRegion region;
+    bool isGesture;
+    };
+
+  struct OnRegionChangeRegion {
+      double latitude;
+    double longitude;
+    double latitudeDelta;
+    double longitudeDelta;
+    };
+
+  struct OnRegionChange {
+      OnRegionChangeRegion region;
+    bool isGesture;
+    };
+
+  struct OnRegionChangeCompleteRegion {
+      double latitude;
+    double longitude;
+    double latitudeDelta;
+    double longitudeDelta;
+    };
+
+  struct OnRegionChangeComplete {
+      OnRegionChangeCompleteRegion region;
+    bool isGesture;
+    };
+
+  struct OnUserLocationChangeCoordinate {
+      double latitude;
+    double longitude;
+    double altitude;
+    double timestamp;
+    Float accuracy;
+    Float speed;
+    Float heading;
+    Float altitudeAccuracy;
+    bool isFromMockProvider;
+    };
+
+  struct OnUserLocationChangeError {
+      std::string message;
+    };
+
+  struct OnUserLocationChange {
+      OnUserLocationChangeCoordinate coordinate;
+    OnUserLocationChangeError error;
+    };
+
+  struct OnShowRecenterButton {
+      bool showRecenterButton;
+    };
+
+  struct OnNavigationRouteLoaded {
+      
+    };
+
+  struct OnNavigationRouteFailedToLoad {
+      
+    };
+
+  struct OnNavigationInfoUpdated {
+      int distanceRemaining;
+    int durationRemaining;
+    };
+
+  struct OnArrivedToDestination {
+      
+    };
+  void onCalloutPress(OnCalloutPress value) const;
+
+  void onDoublePress(OnDoublePress value) const;
+
+  void onIndoorBuildingFocused(OnIndoorBuildingFocused value) const;
+
+  void onIndoorLevelActivated(OnIndoorLevelActivated value) const;
+
+  void onKmlReady(OnKmlReady value) const;
+
+  void onLongPress(OnLongPress value) const;
+
+  void onMapLoaded(OnMapLoaded value) const;
+
+  void onMapReady(OnMapReady value) const;
+
+  void onMarkerDeselect(OnMarkerDeselect value) const;
+
+  void onMarkerDrag(OnMarkerDrag value) const;
+
+  void onMarkerDragEnd(OnMarkerDragEnd value) const;
+
+  void onMarkerDragStart(OnMarkerDragStart value) const;
+
+  void onMarkerPress(OnMarkerPress value) const;
+
+  void onMarkerSelect(OnMarkerSelect value) const;
+
+  void onPanDrag(OnPanDrag value) const;
+
+  void onPoiClick(OnPoiClick value) const;
+
+  void onPress(OnPress value) const;
+
+  void onRegionChangeStart(OnRegionChangeStart value) const;
+
+  void onRegionChange(OnRegionChange value) const;
+
+  void onRegionChangeComplete(OnRegionChangeComplete value) const;
+
+  void onUserLocationChange(OnUserLocationChange value) const;
+
+  void onShowRecenterButton(OnShowRecenterButton value) const;
+
+  void onNavigationRouteLoaded(OnNavigationRouteLoaded value) const;
+
+  void onNavigationRouteFailedToLoad(OnNavigationRouteFailedToLoad value) const;
+
+  void onNavigationInfoUpdated(OnNavigationInfoUpdated value) const;
+
+  void onArrivedToDestination(OnArrivedToDestination value) const;
 };
 class RNMapsOverlayEventEmitter : public ViewEventEmitter {
  public:

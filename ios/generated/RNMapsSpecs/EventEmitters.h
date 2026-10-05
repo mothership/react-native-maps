@@ -292,6 +292,27 @@ class RNMapsGoogleMapViewEventEmitter : public ViewEventEmitter {
       OnUserLocationChangeCoordinate coordinate;
     OnUserLocationChangeError error;
     };
+
+  struct OnShowRecenterButton {
+      bool showRecenterButton;
+    };
+
+  struct OnNavigationRouteLoaded {
+      
+    };
+
+  struct OnNavigationRouteFailedToLoad {
+      std::string status;
+    };
+
+  struct OnNavigationInfoUpdated {
+      double distanceRemaining;
+    double durationRemaining;
+    };
+
+  struct OnArrivedToDestination {
+      
+    };
   void onIndoorBuildingFocused(OnIndoorBuildingFocused value) const;
 
   void onIndoorLevelActivated(OnIndoorLevelActivated value) const;
@@ -329,6 +350,16 @@ class RNMapsGoogleMapViewEventEmitter : public ViewEventEmitter {
   void onRegionChangeComplete(OnRegionChangeComplete value) const;
 
   void onUserLocationChange(OnUserLocationChange value) const;
+
+  void onShowRecenterButton(OnShowRecenterButton value) const;
+
+  void onNavigationRouteLoaded(OnNavigationRouteLoaded value) const;
+
+  void onNavigationRouteFailedToLoad(OnNavigationRouteFailedToLoad value) const;
+
+  void onNavigationInfoUpdated(OnNavigationInfoUpdated value) const;
+
+  void onArrivedToDestination(OnArrivedToDestination value) const;
 };
 class RNMapsGoogleMarkerEventEmitter : public ViewEventEmitter {
  public:

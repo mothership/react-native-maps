@@ -23,6 +23,7 @@ using RNMapsGoogleMarkerComponentDescriptor = ConcreteComponentDescriptor<RNMaps
 using RNMapsGooglePolygonComponentDescriptor = ConcreteComponentDescriptor<RNMapsGooglePolygonShadowNode>;
 using RNMapsMapViewComponentDescriptor = ConcreteComponentDescriptor<RNMapsMapViewShadowNode>;
 using RNMapsMarkerComponentDescriptor = ConcreteComponentDescriptor<RNMapsMarkerShadowNode>;
+using RNMapsNavigationMapViewComponentDescriptor = ConcreteComponentDescriptor<RNMapsNavigationMapViewShadowNode>;
 using RNMapsOverlayComponentDescriptor = ConcreteComponentDescriptor<RNMapsOverlayShadowNode>;
 using RNMapsPolygonComponentDescriptor = ConcreteComponentDescriptor<RNMapsPolygonShadowNode>;
 using RNMapsPolylineComponentDescriptor = ConcreteComponentDescriptor<RNMapsPolylineShadowNode>;

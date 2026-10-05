@@ -4,6 +4,13 @@ import MapView, {
   type MapViewProps,
 } from './MapView';
 
+import NavigationMapView from './NavigationMapView';
+export type {
+  NavigationMapViewProps,
+  NavigationInfoUpdatedEvent,
+  ShowRecenterButtonEvent,
+} from './NavigationMapView';
+
 import Marker from './MapMarker';
 export {MapMarker} from './MapMarker';
 export type {MapMarkerProps} from './MapMarker';
@@ -37,7 +44,7 @@ export {default as AnimatedRegion} from './AnimatedRegion';
 export {default as Geojson} from './Geojson';
 export type {GeojsonProps} from './Geojson';
 
-export {Marker, Overlay};
+export {Marker, Overlay, NavigationMapView};
 export type {MapViewProps};
 export {Animated, MAP_TYPES};
 

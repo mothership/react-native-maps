@@ -34,6 +34,11 @@ RCT_EXPORT_VIEW_PROPERTY(onRegionChangeComplete, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPoiClick, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onIndoorLevelActivated, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onIndoorBuildingFocused, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onShowRecenterButton, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onNavigationRouteLoaded, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onNavigationRouteFailedToLoad, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onNavigationInfoUpdated, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onArrivedToDestination, RCTDirectEventBlock)
 
 @end
 

@@ -128,6 +128,21 @@ RCT_EXPORT_VIEW_PROPERTY(maxZoomLevel, CGFloat)
 RCT_EXPORT_VIEW_PROPERTY(kmlSrc, NSString)
 RCT_EXPORT_VIEW_PROPERTY(loadingBackgroundColor, UIColor)
 
+RCT_EXPORT_VIEW_PROPERTY(navigationModeEnabled, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showsNavigationTripProgressBar, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showsTrafficLights, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showsStopSigns, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showsSpeedometer, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showsSpeedLimit, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showsReportIncidentButton, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(navigationVoiceMuted, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(termsCompanyName, NSString)
+RCT_EXPORT_VIEW_PROPERTY(onShowRecenterButton, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onNavigationRouteLoaded, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onNavigationRouteFailedToLoad, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onNavigationInfoUpdated, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onArrivedToDestination, RCTDirectEventBlock)
+
 RCT_EXPORT_METHOD(getCamera:(nonnull NSNumber *)reactTag
                   resolver: (RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
@@ -421,6 +436,39 @@ RCT_EXPORT_METHOD(setIndoorActiveLevelIndex:(nonnull NSNumber *)reactTag
             if ( levelIndex < [mapView.indoorDisplay.activeBuilding.levels count]) {
                 mapView.indoorDisplay.activeLevel = mapView.indoorDisplay.activeBuilding.levels[levelIndex];
             }
+        }
+    }];
+}
+
+RCT_EXPORT_METHOD(startNavigation:(nonnull NSNumber *)reactTag
+                  coordinate:(NSDictionary *)coordinate
+                  placeId:(NSString *)placeId)
+{
+    CLLocationCoordinate2D coord =
+    CLLocationCoordinate2DMake(
+                               [coordinate[@"latitude"] doubleValue],
+                               [coordinate[@"longitude"] doubleValue]
+                               );
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        id view = viewRegistry[reactTag];
+        if (![view isKindOfClass:[AIRGoogleMap class]]) {
+            RCTLogError(@"Invalid view returned from registry, expecting AIRGoogleMap, got: %@", view);
+        } else {
+            AIRGoogleMap *mapView = (AIRGoogleMap *)view;
+            [mapView startNavigationWithCoordinate:coord andPlaceId:placeId];
+        }
+    }];
+}
+
+RCT_EXPORT_METHOD(recenter:(nonnull NSNumber *)reactTag)
+{
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        id view = viewRegistry[reactTag];
+        if (![view isKindOfClass:[AIRGoogleMap class]]) {
+            RCTLogError(@"Invalid view returned from registry, expecting AIRGoogleMap, got: %@", view);
+        } else {
+            AIRGoogleMap *mapView = (AIRGoogleMap *)view;
+            [mapView recenter];
         }
     }];
 }

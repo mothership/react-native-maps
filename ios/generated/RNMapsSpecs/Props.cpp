@@ -140,7 +140,16 @@ RNMapsGoogleMapViewProps::RNMapsGoogleMapViewProps(
     userLocationUpdateInterval(convertRawProp(context, rawProps, "userLocationUpdateInterval", sourceProps.userLocationUpdateInterval, {0})),
     zoomControlEnabled(convertRawProp(context, rawProps, "zoomControlEnabled", sourceProps.zoomControlEnabled, {false})),
     zoomEnabled(convertRawProp(context, rawProps, "zoomEnabled", sourceProps.zoomEnabled, {true})),
-    zoomTapEnabled(convertRawProp(context, rawProps, "zoomTapEnabled", sourceProps.zoomTapEnabled, {true})) {}
+    zoomTapEnabled(convertRawProp(context, rawProps, "zoomTapEnabled", sourceProps.zoomTapEnabled, {true})),
+    navigationModeEnabled(convertRawProp(context, rawProps, "navigationModeEnabled", sourceProps.navigationModeEnabled, {false})),
+    navigationVoiceMuted(convertRawProp(context, rawProps, "navigationVoiceMuted", sourceProps.navigationVoiceMuted, {false})),
+    showsNavigationTripProgressBar(convertRawProp(context, rawProps, "showsNavigationTripProgressBar", sourceProps.showsNavigationTripProgressBar, {false})),
+    showsTrafficLights(convertRawProp(context, rawProps, "showsTrafficLights", sourceProps.showsTrafficLights, {false})),
+    showsStopSigns(convertRawProp(context, rawProps, "showsStopSigns", sourceProps.showsStopSigns, {false})),
+    showsSpeedometer(convertRawProp(context, rawProps, "showsSpeedometer", sourceProps.showsSpeedometer, {false})),
+    showsSpeedLimit(convertRawProp(context, rawProps, "showsSpeedLimit", sourceProps.showsSpeedLimit, {false})),
+    showsReportIncidentButton(convertRawProp(context, rawProps, "showsReportIncidentButton", sourceProps.showsReportIncidentButton, {true})),
+    termsCompanyName(convertRawProp(context, rawProps, "termsCompanyName", sourceProps.termsCompanyName, {})) {}
     
 #ifdef RN_SERIALIZABLE_STATE
 ComponentName RNMapsGoogleMapViewProps::getDiffPropsImplementationTarget() const {
@@ -288,6 +297,42 @@ folly::dynamic RNMapsGoogleMapViewProps::getDiffProps(
     
   if (zoomTapEnabled != oldProps->zoomTapEnabled) {
     result["zoomTapEnabled"] = zoomTapEnabled;
+  }
+    
+  if (navigationModeEnabled != oldProps->navigationModeEnabled) {
+    result["navigationModeEnabled"] = navigationModeEnabled;
+  }
+    
+  if (navigationVoiceMuted != oldProps->navigationVoiceMuted) {
+    result["navigationVoiceMuted"] = navigationVoiceMuted;
+  }
+    
+  if (showsNavigationTripProgressBar != oldProps->showsNavigationTripProgressBar) {
+    result["showsNavigationTripProgressBar"] = showsNavigationTripProgressBar;
+  }
+    
+  if (showsTrafficLights != oldProps->showsTrafficLights) {
+    result["showsTrafficLights"] = showsTrafficLights;
+  }
+    
+  if (showsStopSigns != oldProps->showsStopSigns) {
+    result["showsStopSigns"] = showsStopSigns;
+  }
+    
+  if (showsSpeedometer != oldProps->showsSpeedometer) {
+    result["showsSpeedometer"] = showsSpeedometer;
+  }
+    
+  if (showsSpeedLimit != oldProps->showsSpeedLimit) {
+    result["showsSpeedLimit"] = showsSpeedLimit;
+  }
+    
+  if (showsReportIncidentButton != oldProps->showsReportIncidentButton) {
+    result["showsReportIncidentButton"] = showsReportIncidentButton;
+  }
+    
+  if (termsCompanyName != oldProps->termsCompanyName) {
+    result["termsCompanyName"] = termsCompanyName;
   }
   return result;
 }

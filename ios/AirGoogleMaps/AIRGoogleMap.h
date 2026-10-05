@@ -12,6 +12,7 @@
 #import <React/RCTBridge.h>
 #import <GoogleMaps/GoogleMaps.h>
 #import <MapKit/MapKit.h>
+#import <CoreLocation/CoreLocation.h>
 #import "AIRGMSMarker.h"
 
 #import "AIRGoogleMapCoordinate.h"
@@ -67,6 +68,24 @@
 @property (nonatomic, assign) BOOL showsIndoorLevelPicker;
 @property (nonatomic, assign) NSString *kmlSrc;
 
+// Navigation properties
+@property (nonatomic, assign) BOOL navigationModeEnabled;
+@property (nonatomic, assign) BOOL showsNavigationTripProgressBar;
+@property (nonatomic, assign) BOOL showsTrafficLights;
+@property (nonatomic, assign) BOOL showsStopSigns;
+@property (nonatomic, assign) BOOL showsSpeedometer;
+@property (nonatomic, assign) BOOL showsSpeedLimit;
+@property (nonatomic, assign) BOOL showsReportIncidentButton;
+@property (nonatomic, assign) BOOL navigationVoiceMuted;
+@property (nonatomic, copy) NSString *termsCompanyName;
+
+// Navigation events
+@property (nonatomic, copy) RCTDirectEventBlock onShowRecenterButton;
+@property (nonatomic, copy) RCTDirectEventBlock onNavigationRouteLoaded;
+@property (nonatomic, copy) RCTDirectEventBlock onNavigationRouteFailedToLoad;
+@property (nonatomic, copy) RCTDirectEventBlock onNavigationInfoUpdated;
+@property (nonatomic, copy) RCTDirectEventBlock onArrivedToDestination;
+
 - (BOOL) isReady;
 - (void)didPrepareMap;
 - (void)mapViewDidFinishTileRendering;
@@ -90,6 +109,9 @@
 -(void) fitToCoordinates:(NSArray<AIRGoogleMapCoordinate *> *) coordinates withEdgePadding:(NSDictionary*) edgePadding animated:(BOOL)animated;
 -(void) fitToElementsWithEdgePadding:(nonnull NSDictionary *)edgePadding
              animated:(BOOL)animated;
+
+- (void)startNavigationWithCoordinate:(CLLocationCoordinate2D)coordinate andPlaceId:(NSString *)placeId;
+- (void)recenter;
 @end
 
 #endif

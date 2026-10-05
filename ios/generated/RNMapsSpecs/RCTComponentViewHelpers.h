@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)fitToSuppliedMarkers:(NSString *)markersJSON edgePaddingJSON:(NSString *)edgePaddingJSON animated:(BOOL)animated;
 - (void)fitToCoordinates:(NSString *)coordinatesJSON edgePaddingJSON:(NSString *)edgePaddingJSON animated:(BOOL)animated;
 - (void)setIndoorActiveLevelIndex:(NSInteger)activeLevelIndex;
+- (void)startNavigation:(NSString *)coordinateJSON placeId:(NSString *)placeId;
+- (void)recenter;
 @end
 
 RCT_EXTERN inline void RCTRNMapsGoogleMapViewHandleCommand(
@@ -221,6 +223,46 @@ if ([commandName isEqualToString:@"setIndoorActiveLevelIndex"]) {
   NSInteger activeLevelIndex = [(NSNumber *)arg0 intValue];
 
   [componentView setIndoorActiveLevelIndex:activeLevelIndex];
+  return;
+}
+
+if ([commandName isEqualToString:@"startNavigation"]) {
+#if RCT_DEBUG
+  if ([args count] != 2) {
+    RCTLogError(@"%@ command %@ received %d arguments, expected %d.", @"RNMapsGoogleMapView", commandName, (int)[args count], 2);
+    return;
+  }
+#endif
+
+  NSObject *arg0 = args[0];
+#if RCT_DEBUG
+  if (!RCTValidateTypeOfViewCommandArgument(arg0, [NSString class], @"string", @"RNMapsGoogleMapView", commandName, @"1st")) {
+    return;
+  }
+#endif
+  NSString * coordinateJSON = (NSString *)arg0;
+
+NSObject *arg1 = args[1];
+#if RCT_DEBUG
+  if (!RCTValidateTypeOfViewCommandArgument(arg1, [NSString class], @"string", @"RNMapsGoogleMapView", commandName, @"2nd")) {
+    return;
+  }
+#endif
+  NSString * placeId = (NSString *)arg1;
+
+  [componentView startNavigation:coordinateJSON placeId:placeId];
+  return;
+}
+
+if ([commandName isEqualToString:@"recenter"]) {
+#if RCT_DEBUG
+  if ([args count] != 0) {
+    RCTLogError(@"%@ command %@ received %d arguments, expected %d.", @"RNMapsGoogleMapView", commandName, (int)[args count], 0);
+    return;
+  }
+#endif
+
+  [componentView recenter];
   return;
 }
 

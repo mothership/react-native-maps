@@ -19,7 +19,11 @@
 #import "AIRGoogleMapOverlay.h"
 #import "AIRGoogleMapCoordinate.h"
 #import <GoogleMaps/GoogleMaps.h>
+#import <GoogleNavigation/GoogleNavigation.h>
 #import <MapKit/MapKit.h>
+#import <CoreLocation/CoreLocation.h>
+#import <AVFoundation/AVFoundation.h>
+#import <TargetConditionals.h>
 #import <React/UIView+React.h>
 #import <React/RCTBridge.h>
 #import <React/RCTConvert.h>
@@ -55,11 +59,30 @@ id regionAsJSON(MKCoordinateRegion region) {
 #else
 #import "RNMapsAirModuleDelegate.h"
 #endif
-@interface AIRGoogleMap () <GMSIndoorDisplayDelegate, RNMapsAirModuleDelegate>
+@interface AIRGoogleMap () <GMSIndoorDisplayDelegate, RNMapsAirModuleDelegate, GMSNavigatorListener>
 
 - (id)eventFromCoordinate:(CLLocationCoordinate2D)coordinate;
 
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSDictionary*> *origGestureRecognizersMeta;
+@property (nonatomic, assign) BOOL isNavigationVoiceMuted;
+@property (nonatomic, assign) BOOL pendingShowsNavigationTripProgressBar;
+@property (nonatomic, assign) BOOL pendingShowsTrafficLights;
+@property (nonatomic, assign) BOOL pendingShowsStopSigns;
+@property (nonatomic, assign) BOOL pendingShowsSpeedometer;
+@property (nonatomic, assign) BOOL pendingShowsSpeedLimit;
+@property (nonatomic, assign) BOOL pendingShowsReportIncidentButton;
+@property (nonatomic, strong) CLLocationManager *navigationLocationManager;
+@property (nonatomic, assign) BOOL didConfigureNavigationAudioSession;
+
+- (void)applyNavigationChromeIfPossible;
+- (void)configureNavigationAudioSession;
+- (void)applyNavigationVoiceGuidance;
+- (void)requestRouteToDestinations:(NSArray<GMSNavigationWaypoint *> *)destinations
+            destinationIsPlaceId:(BOOL)destinationIsPlaceId
+                      coordinate:(CLLocationCoordinate2D)coordinate;
+- (void)handleRouteStatus:(GMSRouteStatus)routeStatus;
+- (void)activateGuidanceAndFollowRoute;
+- (NSString *)nameForRouteStatus:(GMSRouteStatus)routeStatus;
 
 @end
 
@@ -124,6 +147,7 @@ id regionAsJSON(MKCoordinateRegion region) {
               context:NULL];
 
     self.origGestureRecognizersMeta = [[NSMutableDictionary alloc] init];
+    self.pendingShowsReportIncidentButton = YES;
 
     self.indoorDisplay.delegate = self;
   }
@@ -534,6 +558,14 @@ id regionAsJSON(MKCoordinateRegion region) {
                  @"isGesture": [NSNumber numberWithBool:gesture],
     };
     if (self.onRegionChangeStart) self.onRegionChangeStart(event);
+
+    if (!self.navigator.isGuidanceActive) {
+        return;
+    }
+    if (!gesture) {
+        return;
+    }
+    if (self.onShowRecenterButton) self.onShowRecenterButton(@{@"showRecenterButton": @YES});
 }
 
 - (void)didChangeCameraPosition:(GMSCameraPosition *)position isGesture:(BOOL)isGesture{
@@ -660,6 +692,133 @@ id regionAsJSON(MKCoordinateRegion region) {
 
 - (BOOL)showsTraffic {
   return self.trafficEnabled;
+}
+
+- (BOOL)navigationModeEnabled {
+  return self.navigationEnabled;
+}
+
+- (void)setNavigationModeEnabled:(BOOL)navigationModeEnabled {
+  if (![GMSNavigationServices areTermsAndConditionsAccepted]) {
+    return;
+  }
+  [self setNavigationEnabled:navigationModeEnabled];
+  [self applyNavigationChromeIfPossible];
+}
+
+- (BOOL)showsNavigationTripProgressBar {
+  return self.pendingShowsNavigationTripProgressBar;
+}
+
+- (void)setShowsNavigationTripProgressBar:(BOOL)showsNavigationTripProgressBar {
+  self.pendingShowsNavigationTripProgressBar = showsNavigationTripProgressBar;
+  [self applyNavigationChromeIfPossible];
+}
+
+- (BOOL)showsTrafficLights {
+  return self.pendingShowsTrafficLights;
+}
+
+- (void)setShowsTrafficLights:(BOOL)showsTrafficLights {
+  self.pendingShowsTrafficLights = showsTrafficLights;
+  [self applyNavigationChromeIfPossible];
+}
+
+- (BOOL)showsStopSigns {
+  return self.pendingShowsStopSigns;
+}
+
+- (void)setShowsStopSigns:(BOOL)showsStopSigns {
+  self.pendingShowsStopSigns = showsStopSigns;
+  [self applyNavigationChromeIfPossible];
+}
+
+- (BOOL)showsSpeedometer {
+  return self.pendingShowsSpeedometer;
+}
+
+- (void)setShowsSpeedometer:(BOOL)showsSpeedometer {
+  self.pendingShowsSpeedometer = showsSpeedometer;
+  [self applyNavigationChromeIfPossible];
+}
+
+- (BOOL)showsSpeedLimit {
+  return self.pendingShowsSpeedLimit;
+}
+
+- (void)setShowsSpeedLimit:(BOOL)showsSpeedLimit {
+  self.pendingShowsSpeedLimit = showsSpeedLimit;
+  [self applyNavigationChromeIfPossible];
+}
+
+- (BOOL)showsReportIncidentButton {
+  return self.pendingShowsReportIncidentButton;
+}
+
+- (void)setShowsReportIncidentButton:(BOOL)showsReportIncidentButton {
+  self.pendingShowsReportIncidentButton = showsReportIncidentButton;
+  [self applyNavigationChromeIfPossible];
+}
+
+- (void)applyNavigationChromeIfPossible {
+  if (!self.isNavigationEnabled) {
+    return;
+  }
+  [self.settings setNavigationTripProgressBarEnabled:self.pendingShowsNavigationTripProgressBar];
+  [self.settings setShowsTrafficLights:self.pendingShowsTrafficLights];
+  [self.settings setShowsStopSigns:self.pendingShowsStopSigns];
+  [self setShouldDisplaySpeedometer:self.pendingShowsSpeedometer];
+  [self setShouldDisplaySpeedLimit:self.pendingShowsSpeedLimit];
+  [self.settings setNavigationReportIncidentButtonEnabled:self.pendingShowsReportIncidentButton];
+}
+
+- (BOOL)navigationVoiceMuted {
+  return self.isNavigationVoiceMuted;
+}
+
+- (void)setNavigationVoiceMuted:(BOOL)navigationVoiceMuted {
+  self.isNavigationVoiceMuted = navigationVoiceMuted;
+  [self applyNavigationVoiceGuidance];
+}
+
+- (void)configureNavigationAudioSession {
+  if (self.didConfigureNavigationAudioSession) {
+    return;
+  }
+  self.didConfigureNavigationAudioSession = YES;
+
+  NSError *error = nil;
+  AVAudioSession *session = [AVAudioSession sharedInstance];
+  AVAudioSessionMode mode = AVAudioSessionModeDefault;
+  AVAudioSessionCategoryOptions options = AVAudioSessionCategoryOptionDuckOthers |
+                                          AVAudioSessionCategoryOptionMixWithOthers;
+#if !TARGET_OS_SIMULATOR
+  mode = AVAudioSessionModeSpokenAudio;
+#endif
+  [session setCategory:AVAudioSessionCategoryPlayback
+                  mode:mode
+               options:options
+                 error:&error];
+  if (error) {
+    NSLog(@"[NavigationMapView] Audio session category failed: %@", error);
+  }
+}
+
+- (void)applyNavigationVoiceGuidance {
+  if (!self.navigator) {
+    return;
+  }
+#if TARGET_OS_SIMULATOR
+  self.navigator.audioDeviceType = GMSVoiceGuidanceAudioDeviceTypeBuiltInOnly;
+#else
+  self.navigator.audioDeviceType = GMSVoiceGuidanceAudioDeviceTypeBluetooth;
+#endif
+  if (self.isNavigationVoiceMuted) {
+    self.navigator.voiceGuidance = GMSNavigationVoiceGuidanceSilent;
+    return;
+  }
+  [self configureNavigationAudioSession];
+  self.navigator.voiceGuidance = GMSNavigationVoiceGuidanceAlertsAndGuidance;
 }
 
 - (void)setShowsBuildings:(BOOL)showsBuildings {
@@ -1234,6 +1393,183 @@ id regionAsJSON(MKCoordinateRegion region) {
 
 }
 
+#pragma mark - Navigation
+
+- (void)startNavigationWithCoordinate:(CLLocationCoordinate2D)coordinate andPlaceId:(NSString *)placeId {
+    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:self.initialRegion.center.latitude longitude:self.initialRegion.center.longitude zoom:14];
+    self.camera = camera;
+    NSString *companyName = self.termsCompanyName.length > 0 ? self.termsCompanyName : @"";
+    [GMSNavigationServices showTermsAndConditionsDialogIfNeededWithCompanyName:companyName callback:^(BOOL termsAccepted) {
+        if (!termsAccepted) {
+            [self handleRouteStatus:GMSRouteStatusInternalError];
+            return;
+        }
+
+        NSMutableArray<GMSNavigationWaypoint *>* destinations = [NSMutableArray array];
+        BOOL destinationIsPlaceId = false;
+        if (placeId.length > 0) {
+            GMSNavigationWaypoint *placeWaypoint = [[GMSNavigationWaypoint alloc] initWithPlaceID:placeId title:@"Destination"];
+            if (placeWaypoint) {
+                [destinations addObject:placeWaypoint];
+                destinationIsPlaceId = true;
+            }
+        } else if (coordinate.latitude != 0 && coordinate.longitude != 0) {
+            GMSNavigationWaypoint *locationWaypoint = [[GMSNavigationWaypoint alloc] initWithLocation:coordinate title:@"Destination"];
+            if (locationWaypoint) {
+                [destinations addObject:locationWaypoint];
+            }
+        }
+        if (destinations.count == 0) {
+            [self handleRouteStatus:GMSRouteStatusNoWaypointsError];
+            return;
+        }
+
+        if (!self.navigationLocationManager) {
+            self.navigationLocationManager = [CLLocationManager new];
+        }
+        [self.navigationLocationManager requestAlwaysAuthorization];
+        self.navigationLocationManager.allowsBackgroundLocationUpdates = YES;
+        self.navigationLocationManager.pausesLocationUpdatesAutomatically = NO;
+        self.myLocationEnabled = YES;
+
+        [self setNavigationEnabled:true];
+        [self setTravelMode:GMSNavigationTravelModeDriving];
+        [self applyNavigationChromeIfPossible];
+
+        [self.settings setRecenterButtonEnabled:false];
+        [self.settings setNavigationHeaderEnabled:true];
+        [self.settings setShowsDestinationMarkers:true];
+        [self.settings setNavigationHeaderPrimaryBackgroundColor:[UIColor blackColor]];
+        [self.settings setNavigationHeaderSecondaryBackgroundColor:[UIColor blackColor]];
+        [self.settings setNavigationFooterEnabled:false];
+
+        if (!self.navigator) {
+            [self handleRouteStatus:GMSRouteStatusInternalError];
+            return;
+        }
+
+        CGFloat minorSpeedAlertThresholdPercentage = 0.05f;
+        CGFloat majorSpeedAlertThresholdPercentage = 0.1f;
+        NSTimeInterval severityUpgradeDurationSeconds = 5;
+        GMSNavigationMutableSpeedAlertOptions *mutableSpeedAlertOptions = [[GMSNavigationMutableSpeedAlertOptions alloc] init];
+        [mutableSpeedAlertOptions setSeverityUpgradeDurationSeconds:severityUpgradeDurationSeconds];
+        [mutableSpeedAlertOptions setSpeedAlertThresholdPercentage:minorSpeedAlertThresholdPercentage forSpeedAlertSeverity:GMSNavigationSpeedAlertSeverityMinor];
+        [mutableSpeedAlertOptions setSpeedAlertThresholdPercentage:majorSpeedAlertThresholdPercentage forSpeedAlertSeverity:GMSNavigationSpeedAlertSeverityMajor];
+        [self.navigator setSpeedAlertOptions:mutableSpeedAlertOptions];
+
+        [self.navigator setTimeUpdateThreshold:10];
+        [self.navigator setDistanceUpdateThreshold:100];
+        [self.navigator addListener:self];
+        [self applyNavigationVoiceGuidance];
+
+        __weak AIRGoogleMap *weakSelf = self;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [weakSelf requestRouteToDestinations:destinations
+                             destinationIsPlaceId:destinationIsPlaceId
+                                       coordinate:coordinate];
+        });
+    }];
+}
+
+- (void)requestRouteToDestinations:(NSArray<GMSNavigationWaypoint *> *)destinations
+            destinationIsPlaceId:(BOOL)destinationIsPlaceId
+                      coordinate:(CLLocationCoordinate2D)coordinate {
+    __weak AIRGoogleMap *weakSelf = self;
+    [self.navigator setDestinations:destinations callback:^(GMSRouteStatus routeStatus) {
+        AIRGoogleMap *strongSelf = weakSelf;
+        if (!strongSelf) {
+            return;
+        }
+        if (routeStatus != GMSRouteStatusOK && destinationIsPlaceId && coordinate.latitude != 0 && coordinate.longitude != 0) {
+            GMSNavigationWaypoint *fallback = [[GMSNavigationWaypoint alloc] initWithLocation:coordinate title:@"Destination"];
+            if (!fallback) {
+                [strongSelf handleRouteStatus:routeStatus];
+                return;
+            }
+            [strongSelf.navigator setDestinations:@[fallback] callback:^(GMSRouteStatus fallbackStatus) {
+                [weakSelf handleRouteStatus:fallbackStatus];
+            }];
+            return;
+        }
+        [strongSelf handleRouteStatus:routeStatus];
+    }];
+}
+
+- (void)handleRouteStatus:(GMSRouteStatus)routeStatus {
+    if (routeStatus != GMSRouteStatusOK) {
+        NSString *statusName = [self nameForRouteStatus:routeStatus];
+        NSLog(@"[NavigationMapView] Route failed: %@", statusName);
+        if (self.onNavigationRouteFailedToLoad) {
+            self.onNavigationRouteFailedToLoad(@{@"status": statusName});
+        }
+        return;
+    }
+
+    if (self.onNavigationRouteLoaded) {
+        self.onNavigationRouteLoaded(@{});
+    }
+    [self activateGuidanceAndFollowRoute];
+}
+
+- (void)activateGuidanceAndFollowRoute {
+    [self applyNavigationVoiceGuidance];
+    [self.navigator setGuidanceActive:true];
+    [self.settings setNavigationHeaderEnabled:true];
+    [self.settings setShowsDestinationMarkers:true];
+    [self setCameraMode:GMSNavigationCameraModeFollowing];
+}
+
+- (NSString *)nameForRouteStatus:(GMSRouteStatus)routeStatus {
+    switch (routeStatus) {
+        case GMSRouteStatusInternalError:
+            return @"internalError";
+        case GMSRouteStatusOK:
+            return @"ok";
+        case GMSRouteStatusNoRouteFound:
+            return @"noRouteFound";
+        case GMSRouteStatusNetworkError:
+            return @"networkError";
+        case GMSRouteStatusQuotaExceeded:
+            return @"quotaExceeded";
+        case GMSRouteStatusAPIKeyNotAuthorized:
+            return @"apiKeyNotAuthorized";
+        case GMSRouteStatusCanceled:
+            return @"canceled";
+        case GMSRouteStatusDuplicateWaypointsError:
+            return @"duplicateWaypoints";
+        case GMSRouteStatusNoWaypointsError:
+            return @"noWaypoints";
+        case GMSRouteStatusLocationUnavailable:
+            return @"locationUnavailable";
+        case GMSRouteStatusWaypointError:
+            return @"waypointError";
+        case GMSRouteStatusTravelModeUnsupported:
+            return @"travelModeUnsupported";
+        default:
+            return [NSString stringWithFormat:@"unknown(%ld)", (long)routeStatus];
+    }
+}
+
+- (void)recenter {
+    if (self.navigator && [self.navigator isGuidanceActive]) {
+        self.cameraMode = GMSNavigationCameraModeFollowing;
+    }
+
+    if (self.onShowRecenterButton) self.onShowRecenterButton(@{@"showRecenterButton": @NO});
+}
+
+- (void)navigator:(GMSNavigator *)navigator didArriveAtWaypoint:(GMSNavigationWaypoint *)waypoint {
+    if (self.onArrivedToDestination) self.onArrivedToDestination(@{});
+}
+
+- (void)navigator:(GMSNavigator *)navigator didUpdateNavInfo:(GMSNavigationNavInfo *)navInfo {
+    if (self.onNavigationInfoUpdated) {
+        self.onNavigationInfoUpdated(@{
+            @"distanceRemaining": @(navInfo.distanceToFinalDestinationMeters),
+            @"durationRemaining": @(navInfo.timeToFinalDestinationSeconds)
+        });
+    }
+}
 
 @end
 

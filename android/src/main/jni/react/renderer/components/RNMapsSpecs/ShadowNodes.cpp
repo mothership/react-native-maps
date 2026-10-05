@@ -19,6 +19,7 @@ extern const char RNMapsGoogleMarkerComponentName[] = "RNMapsGoogleMarker";
 extern const char RNMapsGooglePolygonComponentName[] = "RNMapsGooglePolygon";
 extern const char RNMapsMapViewComponentName[] = "RNMapsMapView";
 extern const char RNMapsMarkerComponentName[] = "RNMapsMarker";
+extern const char RNMapsNavigationMapViewComponentName[] = "RNMapsNavigationMapView";
 extern const char RNMapsOverlayComponentName[] = "RNMapsOverlay";
 extern const char RNMapsPolygonComponentName[] = "RNMapsPolygon";
 extern const char RNMapsPolylineComponentName[] = "RNMapsPolyline";

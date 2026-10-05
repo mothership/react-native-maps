@@ -595,6 +595,15 @@ class RNMapsGoogleMapViewProps final : public ViewProps {
   bool zoomControlEnabled{false};
   bool zoomEnabled{true};
   bool zoomTapEnabled{true};
+  bool navigationModeEnabled{false};
+  bool navigationVoiceMuted{false};
+  bool showsNavigationTripProgressBar{false};
+  bool showsTrafficLights{false};
+  bool showsStopSigns{false};
+  bool showsSpeedometer{false};
+  bool showsSpeedLimit{false};
+  bool showsReportIncidentButton{true};
+  std::string termsCompanyName{};
 
   #ifdef RN_SERIALIZABLE_STATE
   ComponentName getDiffPropsImplementationTarget() const override;

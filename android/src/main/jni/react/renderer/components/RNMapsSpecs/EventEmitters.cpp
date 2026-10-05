@@ -384,6 +384,52 @@ void RNMapsGoogleMapViewEventEmitter::onUserLocationChange(OnUserLocationChange 
 }
 
 
+void RNMapsGoogleMapViewEventEmitter::onShowRecenterButton(OnShowRecenterButton event) const {
+  dispatchEvent("showRecenterButton", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "showRecenterButton", event.showRecenterButton);
+    return payload;
+  });
+}
+
+
+void RNMapsGoogleMapViewEventEmitter::onNavigationRouteLoaded(OnNavigationRouteLoaded event) const {
+  dispatchEvent("navigationRouteLoaded", [](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    
+    return payload;
+  });
+}
+
+
+void RNMapsGoogleMapViewEventEmitter::onNavigationRouteFailedToLoad(OnNavigationRouteFailedToLoad event) const {
+  dispatchEvent("navigationRouteFailedToLoad", [](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    
+    return payload;
+  });
+}
+
+
+void RNMapsGoogleMapViewEventEmitter::onNavigationInfoUpdated(OnNavigationInfoUpdated event) const {
+  dispatchEvent("navigationInfoUpdated", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "distanceRemaining", event.distanceRemaining);
+payload.setProperty(runtime, "durationRemaining", event.durationRemaining);
+    return payload;
+  });
+}
+
+
+void RNMapsGoogleMapViewEventEmitter::onArrivedToDestination(OnArrivedToDestination event) const {
+  dispatchEvent("arrivedToDestination", [](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    
+    return payload;
+  });
+}
+
+
 void RNMapsGoogleMarkerEventEmitter::onCalloutPress(OnCalloutPress event) const {
   dispatchEvent("calloutPress", [event=std::move(event)](jsi::Runtime &runtime) {
     auto payload = jsi::Object(runtime);
@@ -1079,6 +1125,442 @@ payload.setProperty(runtime, "id", event.id);
   position.setProperty(runtime, "y", event.position.y);
   payload.setProperty(runtime, "position", position);
 }
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onCalloutPress(OnCalloutPress event) const {
+  dispatchEvent("calloutPress", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "action", event.action);
+{
+  auto frame = jsi::Object(runtime);
+  frame.setProperty(runtime, "x", event.frame.x);
+  frame.setProperty(runtime, "y", event.frame.y);
+  frame.setProperty(runtime, "width", event.frame.width);
+  frame.setProperty(runtime, "height", event.frame.height);
+  payload.setProperty(runtime, "frame", frame);
+}
+payload.setProperty(runtime, "id", event.id);
+{
+  auto point = jsi::Object(runtime);
+  point.setProperty(runtime, "x", event.point.x);
+  point.setProperty(runtime, "y", event.point.y);
+  payload.setProperty(runtime, "point", point);
+}
+{
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+{
+  auto position = jsi::Object(runtime);
+  position.setProperty(runtime, "x", event.position.x);
+  position.setProperty(runtime, "y", event.position.y);
+  payload.setProperty(runtime, "position", position);
+}
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onDoublePress(OnDoublePress event) const {
+  dispatchEvent("doublePress", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+{
+  auto position = jsi::Object(runtime);
+  position.setProperty(runtime, "x", event.position.x);
+  position.setProperty(runtime, "y", event.position.y);
+  payload.setProperty(runtime, "position", position);
+}
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onIndoorBuildingFocused(OnIndoorBuildingFocused event) const {
+  dispatchEvent("indoorBuildingFocused", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto IndoorBuilding = jsi::Object(runtime);
+  IndoorBuilding.setProperty(runtime, "underground", event.IndoorBuilding.underground);
+  IndoorBuilding.setProperty(runtime, "activeLevelIndex", event.IndoorBuilding.activeLevelIndex);
+  payload.setProperty(runtime, "IndoorBuilding", IndoorBuilding);
+}
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onIndoorLevelActivated(OnIndoorLevelActivated event) const {
+  dispatchEvent("indoorLevelActivated", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto IndoorLevel = jsi::Object(runtime);
+  IndoorLevel.setProperty(runtime, "activeLevelIndex", event.IndoorLevel.activeLevelIndex);
+  IndoorLevel.setProperty(runtime, "name", event.IndoorLevel.name);
+  IndoorLevel.setProperty(runtime, "shortName", event.IndoorLevel.shortName);
+  payload.setProperty(runtime, "IndoorLevel", IndoorLevel);
+}
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onKmlReady(OnKmlReady event) const {
+  dispatchEvent("kmlReady", [](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onLongPress(OnLongPress event) const {
+  dispatchEvent("longPress", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+{
+  auto position = jsi::Object(runtime);
+  position.setProperty(runtime, "x", event.position.x);
+  position.setProperty(runtime, "y", event.position.y);
+  payload.setProperty(runtime, "position", position);
+}
+payload.setProperty(runtime, "action", event.action);
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onMapLoaded(OnMapLoaded event) const {
+  dispatchEvent("mapLoaded", [](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onMapReady(OnMapReady event) const {
+  dispatchEvent("mapReady", [](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onMarkerDeselect(OnMarkerDeselect event) const {
+  dispatchEvent("markerDeselect", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "action", event.action);
+payload.setProperty(runtime, "id", event.id);
+{
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onMarkerDrag(OnMarkerDrag event) const {
+  dispatchEvent("markerDrag", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+{
+  auto position = jsi::Object(runtime);
+  position.setProperty(runtime, "x", event.position.x);
+  position.setProperty(runtime, "y", event.position.y);
+  payload.setProperty(runtime, "position", position);
+}
+payload.setProperty(runtime, "id", event.id);
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onMarkerDragEnd(OnMarkerDragEnd event) const {
+  dispatchEvent("markerDragEnd", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+payload.setProperty(runtime, "id", event.id);
+{
+  auto position = jsi::Object(runtime);
+  position.setProperty(runtime, "x", event.position.x);
+  position.setProperty(runtime, "y", event.position.y);
+  payload.setProperty(runtime, "position", position);
+}
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onMarkerDragStart(OnMarkerDragStart event) const {
+  dispatchEvent("markerDragStart", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+payload.setProperty(runtime, "id", event.id);
+{
+  auto position = jsi::Object(runtime);
+  position.setProperty(runtime, "x", event.position.x);
+  position.setProperty(runtime, "y", event.position.y);
+  payload.setProperty(runtime, "position", position);
+}
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onMarkerPress(OnMarkerPress event) const {
+  dispatchEvent("markerPress", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "action", event.action);
+payload.setProperty(runtime, "id", event.id);
+{
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+{
+  auto position = jsi::Object(runtime);
+  position.setProperty(runtime, "x", event.position.x);
+  position.setProperty(runtime, "y", event.position.y);
+  payload.setProperty(runtime, "position", position);
+}
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onMarkerSelect(OnMarkerSelect event) const {
+  dispatchEvent("markerSelect", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "action", event.action);
+payload.setProperty(runtime, "id", event.id);
+{
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onPanDrag(OnPanDrag event) const {
+  dispatchEvent("panDrag", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+{
+  auto position = jsi::Object(runtime);
+  position.setProperty(runtime, "x", event.position.x);
+  position.setProperty(runtime, "y", event.position.y);
+  payload.setProperty(runtime, "position", position);
+}
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onPoiClick(OnPoiClick event) const {
+  dispatchEvent("poiClick", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "placeId", event.placeId);
+payload.setProperty(runtime, "name", event.name);
+{
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+{
+  auto position = jsi::Object(runtime);
+  position.setProperty(runtime, "x", event.position.x);
+  position.setProperty(runtime, "y", event.position.y);
+  payload.setProperty(runtime, "position", position);
+}
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onPress(OnPress event) const {
+  dispatchEvent("press", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+{
+  auto position = jsi::Object(runtime);
+  position.setProperty(runtime, "x", event.position.x);
+  position.setProperty(runtime, "y", event.position.y);
+  payload.setProperty(runtime, "position", position);
+}
+payload.setProperty(runtime, "action", event.action);
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onRegionChangeStart(OnRegionChangeStart event) const {
+  dispatchEvent("regionChangeStart", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto region = jsi::Object(runtime);
+  region.setProperty(runtime, "latitude", event.region.latitude);
+  region.setProperty(runtime, "longitude", event.region.longitude);
+  region.setProperty(runtime, "latitudeDelta", event.region.latitudeDelta);
+  region.setProperty(runtime, "longitudeDelta", event.region.longitudeDelta);
+  payload.setProperty(runtime, "region", region);
+}
+payload.setProperty(runtime, "isGesture", event.isGesture);
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onRegionChange(OnRegionChange event) const {
+  dispatchEvent("regionChange", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto region = jsi::Object(runtime);
+  region.setProperty(runtime, "latitude", event.region.latitude);
+  region.setProperty(runtime, "longitude", event.region.longitude);
+  region.setProperty(runtime, "latitudeDelta", event.region.latitudeDelta);
+  region.setProperty(runtime, "longitudeDelta", event.region.longitudeDelta);
+  payload.setProperty(runtime, "region", region);
+}
+payload.setProperty(runtime, "isGesture", event.isGesture);
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onRegionChangeComplete(OnRegionChangeComplete event) const {
+  dispatchEvent("regionChangeComplete", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto region = jsi::Object(runtime);
+  region.setProperty(runtime, "latitude", event.region.latitude);
+  region.setProperty(runtime, "longitude", event.region.longitude);
+  region.setProperty(runtime, "latitudeDelta", event.region.latitudeDelta);
+  region.setProperty(runtime, "longitudeDelta", event.region.longitudeDelta);
+  payload.setProperty(runtime, "region", region);
+}
+payload.setProperty(runtime, "isGesture", event.isGesture);
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onUserLocationChange(OnUserLocationChange event) const {
+  dispatchEvent("userLocationChange", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    {
+  auto coordinate = jsi::Object(runtime);
+  coordinate.setProperty(runtime, "latitude", event.coordinate.latitude);
+  coordinate.setProperty(runtime, "longitude", event.coordinate.longitude);
+  coordinate.setProperty(runtime, "altitude", event.coordinate.altitude);
+  coordinate.setProperty(runtime, "timestamp", event.coordinate.timestamp);
+  coordinate.setProperty(runtime, "accuracy", event.coordinate.accuracy);
+  coordinate.setProperty(runtime, "speed", event.coordinate.speed);
+  coordinate.setProperty(runtime, "heading", event.coordinate.heading);
+  coordinate.setProperty(runtime, "altitudeAccuracy", event.coordinate.altitudeAccuracy);
+  coordinate.setProperty(runtime, "isFromMockProvider", event.coordinate.isFromMockProvider);
+  payload.setProperty(runtime, "coordinate", coordinate);
+}
+{
+  auto error = jsi::Object(runtime);
+  error.setProperty(runtime, "message", event.error.message);
+  payload.setProperty(runtime, "error", error);
+}
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onShowRecenterButton(OnShowRecenterButton event) const {
+  dispatchEvent("showRecenterButton", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "showRecenterButton", event.showRecenterButton);
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onNavigationRouteLoaded(OnNavigationRouteLoaded event) const {
+  dispatchEvent("navigationRouteLoaded", [](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onNavigationRouteFailedToLoad(OnNavigationRouteFailedToLoad event) const {
+  dispatchEvent("navigationRouteFailedToLoad", [](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onNavigationInfoUpdated(OnNavigationInfoUpdated event) const {
+  dispatchEvent("navigationInfoUpdated", [event=std::move(event)](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    payload.setProperty(runtime, "distanceRemaining", event.distanceRemaining);
+payload.setProperty(runtime, "durationRemaining", event.durationRemaining);
+    return payload;
+  });
+}
+
+
+void RNMapsNavigationMapViewEventEmitter::onArrivedToDestination(OnArrivedToDestination event) const {
+  dispatchEvent("arrivedToDestination", [](jsi::Runtime &runtime) {
+    auto payload = jsi::Object(runtime);
+    
     return payload;
   });
 }

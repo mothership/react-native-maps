@@ -848,6 +848,125 @@ export interface MapFabricNativeProps extends ViewProps {
    * @platform Android: Not supported
    */
   zoomTapEnabled?: WithDefault<boolean, true>;
+
+  /**
+   * Enable Google Navigation UI on GMSMapView.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   */
+  navigationModeEnabled?: WithDefault<boolean, false>;
+
+  /**
+   * Mute turn-by-turn navigation voice guidance.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   */
+  navigationVoiceMuted?: boolean;
+
+  /**
+   * Show the navigation trip progress bar.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   */
+  showsNavigationTripProgressBar?: boolean;
+
+  /**
+   * Show traffic lights along the navigation route.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   */
+  showsTrafficLights?: boolean;
+
+  /**
+   * Show stop signs along the navigation route.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   */
+  showsStopSigns?: boolean;
+
+  /**
+   * Show the navigation speedometer.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   */
+  showsSpeedometer?: boolean;
+
+  /**
+   * Show the posted speed limit during navigation.
+   *
+   * @default false
+   * @platform iOS: Google Maps only
+   */
+  showsSpeedLimit?: boolean;
+
+  /**
+   * Show the Google Navigation report-incident button (the warning control on the map).
+   *
+   * @default true
+   * @platform iOS: Google Maps only
+   */
+  showsReportIncidentButton?: boolean;
+
+  /**
+   * Company name shown in the Google Navigation terms dialog.
+   *
+   * @platform iOS: Google Maps only
+   */
+  termsCompanyName?: string;
+
+  /**
+   * Called when the map should show or hide a custom recenter control.
+   *
+   * @platform iOS: Google Maps only
+   */
+  onShowRecenterButton?: DirectEventHandler<
+    Readonly<{
+      showRecenterButton: boolean;
+    }>
+  >;
+
+  /**
+   * Called when a navigation route is ready.
+   *
+   * @platform iOS: Google Maps only
+   */
+  onNavigationRouteLoaded?: DirectEventHandler<Readonly<{}>>;
+
+  /**
+   * Called when a navigation route fails to load.
+   *
+   * @platform iOS: Google Maps only
+   */
+  onNavigationRouteFailedToLoad?: DirectEventHandler<
+    Readonly<{
+      status: string;
+    }>
+  >;
+
+  /**
+   * Called when remaining distance or duration changes during guidance.
+   *
+   * @platform iOS: Google Maps only
+   */
+  onNavigationInfoUpdated?: DirectEventHandler<
+    Readonly<{
+      distanceRemaining: Double;
+      durationRemaining: Double;
+    }>
+  >;
+
+  /**
+   * Called when the vehicle arrives at the destination.
+   *
+   * @platform iOS: Google Maps only
+   */
+  onArrivedToDestination?: DirectEventHandler<Readonly<{}>>;
 }
 
 interface NativeCommands {
@@ -891,6 +1010,14 @@ interface NativeCommands {
     viewRef: React.ElementRef<typeof GoogleMapView>,
     activeLevelIndex: Int32,
   ) => void;
+
+  startNavigation: (
+    viewRef: React.ElementRef<typeof GoogleMapView>,
+    coordinateJSON: string,
+    placeId: string,
+  ) => void;
+
+  recenter: (viewRef: React.ElementRef<typeof GoogleMapView>) => void;
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
@@ -902,6 +1029,8 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
     'fitToSuppliedMarkers',
     'fitToCoordinates',
     'setIndoorActiveLevelIndex',
+    'startNavigation',
+    'recenter',
   ],
 });
 
